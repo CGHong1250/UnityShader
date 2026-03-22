@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WaterTest
+  m_Shader: {fileID: 4800000, guid: 66199657858a1cb40b30cd0d132a1772, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _NoiseTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _DepthDdgeSize: 19.5
+    - _FoamAlpha: 1
+    - _FoamAmount: 1
+    - _FoamCutoff: 1
+    - _FoamScale: 1
+    - _FoamSpeed_U: 0
+    - _FoamSpeed_V: 0
+    - _Metallic: 1
+    - _NoiseInfluenceX: 1
+    - _NoiseInfluenceZ: 1
+    - _NormalScale: 1
+    - _RefractionScale: 1
+    - _RefractionSpeedU: 1
+    - _RefractionSpeedV: 1
+    - _Roughness: 1
+    - _SceneMoveDepth: 21.48
+    - _WaterNoiseSize: 1
+    - _WaterSpeed: 1
+    - _WaterStrength: 0.274
+    m_Colors:
+    - _DeepWater: {r: 0, g: 0, b: 0, a: 1}
+    - _FoamColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShallowWater: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

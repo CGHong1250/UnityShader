@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WaterCartoon
+  m_Shader: {fileID: 4800000, guid: e68a77920d296de40a55d6488a87273a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 5, y: 5}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 0b9c10eb27e481541a7ceae8b811db96, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CausticMap:
+        m_Texture: {fileID: 2800000, guid: 3c70a5a96af86684fbf7fc108c83f08e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 2800000, guid: a0a9684f9b605cb4fb4358cae908680a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FoamMap:
+        m_Texture: {fileID: 2800000, guid: b40c5c5d312921b42ba8609ebe6e4ff4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 0.5
+    - _CausticLightness: 0.22
+    - _CausticTiling: 0.05
+    - _DepthDistance: 5
+    - _DepthFogDistance: 50
+    - _FlowMapTiling: 0.1
+    - _FlowScale: 1
+    - _FlowStrength: 1
+    - _FoamNoise: 3.62
+    - _FoamRange: 8.45
+    - _FoamTiling: 0.1
+    - _Metallic: 0
+    - _NormalTiling: 0.1
+    - _Refraction: 1.333
+    - _Smoothness: 1
+    - _Speed: 1
+    - _UJump: -0.2
+    - _VJump: 0.25
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DeepWater: {r: 0, g: 0.37254903, b: 0.5686275, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ShallowWater: {r: 0, g: 0.95000005, b: 1, a: 1}
+    - _WaveA: {r: 1, g: 1, b: 0.05, a: 10}
+    - _WaveB: {r: 0, g: 1, b: 0.025, a: 20}
+  m_BuildTextureStacks: []
