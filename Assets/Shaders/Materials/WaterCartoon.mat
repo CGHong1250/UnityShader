@@ -56,7 +56,7 @@ Material:
     - _BumpScale: 0.5
     - _CausticLightness: 0.22
     - _CausticTiling: 0.05
-    - _DepthDistance: 5
+    - _DepthDistance: 0.7
     - _DepthFogDistance: 50
     - _FlowMapTiling: 0.1
     - _FlowScale: 1

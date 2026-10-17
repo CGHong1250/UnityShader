@@ -354,6 +354,7 @@ TEXTURE2D(_ParallaxMap);
 SAMPLER(sampler_ParallaxMap);
 TEXTURE2D(_ColorMaskMap);      
 SAMPLER(sampler_ColorMaskMap);
+ 
 //顶点混合
 // 图层纹理定义 - 使用条件编译防止重复定义
 #ifdef _ENABLE_LAYER_BLEDN

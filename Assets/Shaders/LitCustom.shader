@@ -5,7 +5,7 @@ Shader "Hong/LitCustom"
         // Specular vs Metallic workflow
         [KWEnum(Workflow, Specular, _SPECULAR, Metallic, _METALLIC)]
         _WorkflowMode("WorkflowMode", Float) = 1.0
-        
+
         [Space]
         [Main(MainTeture)]_group1("MainTeture",float)=1
         [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
@@ -21,95 +21,92 @@ Shader "Hong/LitCustom"
         [Sub(MainTeture_CUT_KEYWORD)] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
         _Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
-
         _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
         _SpecColor("Specular", Color) = (0.2, 0.2, 0.2)
+        _OcclusionStrength("Occlusion Strength", Range(0.0, 1.0)) = 1.0
 
-        [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
-        [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 1.0
+        [Space]
+        [Tex(_,_BumpScale)]_BumpMap("Normal Map", 2D) = "bump" {}
+        [HideInInspector]_BumpScale("Scale", Float) = 1.0
 
-        _BumpScale("Scale", Float) = 1.0
-        _BumpMap("Normal Map", 2D) = "bump" {}
+        [Tex(_)]_PBRMap("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
 
-        _PBRMap("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
+        [HideInInspector]_Parallax("Scale", Range(0.005, 0.08)) = 0.005
+        [Tex(_,_Parallax)]_ParallaxMap("Height Map", 2D) = "black" {}
 
-        _Parallax("Scale", Range(0.005, 0.08)) = 0.005
-        _ParallaxMap("Height Map", 2D) = "black" {}
-
-        _OcclusionStrength("Strength", Range(0.0, 1.0)) = 1.0
-
+        [Space]
         //顶点混合
-        [Toggle(ENABLE_LAYER_BLEDN)] _EnableLayerBlend("Enable layer blend", Float) = 0
+        [Main(LayerBlend)] _EnableLayerBlend("Enable layer blend", Float) = 0
         //混合顶点颜色R
-        _LayerMapR("BlendMap01", 2D) = "white" {}
-        _LayerColorR("Color", Color) = (1,1,1,1)
-        _HueShiftLayerR("Hue Shift", Range(0.0, 1.0)) = 0.0
-        _SaturationLayerR("Saturation", Range(0.0, 2.0)) = 1.0
-        _BrightnessLayerR("Brightness", Range(0.0, 2.0)) = 1.0
+        [Tex(LayerBlend,_LayerColorR)]_LayerMapR("BlendMap01", 2D) = "white" {}
+        [HideInInspector]_LayerColorR("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend)]_HueShiftLayerR("Hue Shift", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend)]_SaturationLayerR("Saturation", Range(0.0, 2.0)) = 1.0
+        [Sub(LayerBlend)]_BrightnessLayerR("Brightness", Range(0.0, 2.0)) = 1.0
         //顶点色R混合法线
-        _BumpScaleLayerR("Scale", Float) = 1.0
-        _BumpMapLayerR("Normal Map", 2D) = "bump" {}
+        [HideInInspector]_BumpScaleLayerR("Scale", Float) = 1.0
+        [Tex(LayerBlend,_BumpScaleLayerR)]_BumpMapLayerR("Normal Map", 2D) = "bump" {}
         //顶点色R混合PBR
-        _PBRMaLayerR("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
-        _SmoothnessLayerR("Smoothness", Range(0.0, 1.0)) = 0.5
-        _MetallicLayerR("Metallic", Range(0.0, 1.0)) = 0.0
-        _SpecColorLayerR("Specular", Color) = (0.2, 0.2, 0.2)
-        _OcclusionStrengthLayerR("Strength", Range(0.0, 1.0)) = 1.0
+        [Tex(LayerBlend)]_PBRMaLayerR("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
+        [Sub(LayerBlend)]_SmoothnessLayerR("Smoothness", Range(0.0, 1.0)) = 0.5
+        [Sub(LayerBlend)]_MetallicLayerR("Metallic", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend)]_SpecColorLayerR("Specular", Color) = (0.2, 0.2, 0.2)
+        [Sub(LayerBlend)]_OcclusionStrengthLayerR("Strength", Range(0.0, 1.0)) = 1.0
 
         //混合顶点颜色G
-        [Toggle(ENABLE_LAYER_BLEDN_LAYER02)] _EnableLayerBlendLayer02("Enable layer blend layer02", Float) = 0
-        _LayerMapG("BlendMap02", 2D) = "white" {}
-        _LayerColorG("Color", Color) = (1,1,1,1)
-        _HueShiftLayerG("Hue Shift", Range(0.0, 1.0)) = 0.0
-        _SaturationLayerG("Saturation", Range(0.0, 2.0)) = 1.0
-        _BrightnessLayerG("Brightness", Range(0.0, 2.0)) = 1.0
+        [SubToggle(LayerBlend,_ENABLE_LAYER_BLEDN_LAYER02)] _EnableLayerBlendLayer02("Enable layer blend layer02", Float) = 0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02,_LayerColorG)] _LayerMapG("BlendMap02", 2D) = "white" {}
+        [HideInInspector] _LayerColorG("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _HueShiftLayerG("Hue Shift", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _SaturationLayerG("Saturation", Range(0.0, 2.0)) = 1.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _BrightnessLayerG("Brightness", Range(0.0, 2.0)) = 1.0
         //顶点色G混合法线
-        _BumpScaleLayerG("Scale", Float) = 1.0
-        _BumpMapLayerG("Normal Map", 2D) = "bump" {}
+        [HideInInspector]_BumpScaleLayerG("Scale", Float) = 1.0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02,_BumpScaleLayerG)] _BumpMapLayerG("Normal Map", 2D) = "bump" {}
         //顶点色G混合PBR
-        _PBRMaLayerG("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
-        _SmoothnessLayerG("Smoothness", Range(0.0, 1.0)) = 0.5
-        _MetallicLayerG("Metallic", Range(0.0, 1.0)) = 0.0
-        _SpecColorLayerG("Specular", Color) = (0.2, 0.2, 0.2)
-        _OcclusionStrengthLayerG("Strength", Range(0.0, 1.0)) = 1.0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)]_PBRMaLayerG("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)]_SmoothnessLayerG("Smoothness", Range(0.0, 1.0)) = 0.5
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)]_MetallicLayerG("Metallic", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)]_SpecColorLayerG("Specular", Color) = (0.2, 0.2, 0.2)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)]_OcclusionStrengthLayerG("Strength", Range(0.0, 1.0)) = 1.0
 
         //混合顶点颜色B
-        [Toggle(ENABLE_LAYER_BLEDN_LAYER03)] _EnableLayerBlendLayer03("Enable layer blend layer03", Float) = 0
-        _LayerMapB("BlendMap03", 2D) = "white" {}
-        _LayerColorB("Color", Color) = (1,1,1,1)
-        _HueShiftLayerB("Hue Shift", Range(0.0, 1.0)) = 0.0
-        _SaturationLayerB("Saturation", Range(0.0, 2.0)) = 1.0
-        _BrightnessLayerB("Brightness", Range(0.0, 2.0)) = 1.0
+        [SubToggle(LayerBlend,_ENABLE_LAYER_BLEDN_LAYER03)] _EnableLayerBlendLayer03("Enable layer blend layer03", Float) = 0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03,_LayerColorB)]_LayerMapB("BlendMap03", 2D) = "white" {}
+        [HideInInspector]_LayerColorB("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_HueShiftLayerB("Hue Shift", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_SaturationLayerB("Saturation", Range(0.0, 2.0)) = 1.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_BrightnessLayerB("Brightness", Range(0.0, 2.0)) = 1.0
         //顶点色G混合法线
-        _BumpScaleLayerB("Scale", Float) = 1.0
-        _BumpMapLayerB("Normal Map", 2D) = "bump" {}
+        [HideInInspector]_BumpScaleLayerB("Scale", Float) = 1.0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03,_BumpScaleLayerB)]_BumpMapLayerB("Normal Map", 2D) = "bump" {}
         //顶点色G混合PBR
-        _PBRMaLayerB("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
-        _SmoothnessLayerB("Smoothness", Range(0.0, 1.0)) = 0.5
-        _MetallicLayerB("Metallic", Range(0.0, 1.0)) = 0.0
-        _SpecColorLayerB("Specular", Color) = (0.2, 0.2, 0.2)
-        _OcclusionStrengthLayerB("Strength", Range(0.0, 1.0)) = 1.0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_PBRMaLayerB("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_SmoothnessLayerB("Smoothness", Range(0.0, 1.0)) = 0.5
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_MetallicLayerB("Metallic", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_SpecColorLayerB("Specular", Color) = (0.2, 0.2, 0.2)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_OcclusionStrengthLayerB("Strength", Range(0.0, 1.0)) = 1.0
 
         //混合顶点颜色AA
-        [Toggle(ENABLE_LAYER_BLEDN_LAYER04)] _EnableLayerBlendLayer04("Enable layer blend layer04", Float) = 0
-        _LayerMapA("BlendMap04", 2D) = "white" {}
-        _LayerColorA("Color", Color) = (1,1,1,1)
-        _HueShiftLayerA("Hue Shift", Range(0.0, 1.0)) = 0.0
-        _SaturationLayerA("Saturation", Range(0.0, 2.0)) = 1.0
-        _BrightnessLayerA("Brightness", Range(0.0, 2.0)) = 1.0
+        [SubToggle(LayerBlend,_ENABLE_LAYER_BLEDN_LAYER04)] _EnableLayerBlendLayer04("Enable layer blend layer04", Float) = 0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04,_LayerColorA)]_LayerMapA("BlendMap04", 2D) = "white" {}
+        [HideInInspector]_LayerColorA("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)] _HueShiftLayerA("Hue Shift", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_SaturationLayerA("Saturation", Range(0.0, 2.0)) = 1.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_BrightnessLayerA("Brightness", Range(0.0, 2.0)) = 1.0
         //顶点色G混合法线
-        _BumpScaleLayerA("Scale", Float) = 1.0
-        _BumpMapLayerA("Normal Map", 2D) = "bump" {}
+        [HideInInspector]_BumpScaleLayerA("Scale", Float) = 1.0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04,_BumpScaleLayerA)]_BumpMapLayerA("Normal Map", 2D) = "bump" {}
         //顶点色G混合PBR
-        _PBRMaLayerA("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
-        _SmoothnessLayerA("Smoothness", Range(0.0, 1.0)) = 0.5
-        _MetallicLayerA("Metallic", Range(0.0, 1.0)) = 0.0
-        _SpecColorLayerA("Specular", Color) = (0.2, 0.2, 0.2)
-        _OcclusionStrengthLayerA("Strength", Range(0.0, 1.0)) = 1.0
+        [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_PBRMaLayerA("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_SmoothnessLayerA("Smoothness", Range(0.0, 1.0)) = 0.5
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_MetallicLayerA("Metallic", Range(0.0, 1.0)) = 0.0
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_SpecColorLayerA("Specular", Color) = (0.2, 0.2, 0.2)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_OcclusionStrengthLayerA("Strength", Range(0.0, 1.0)) = 1.0
 
-
-        [HDR] _EmissionColor("Color", Color) = (0,0,0)
-        _EmissionMap("Emission", 2D) = "white" {}
+        [SubToggle(_,_EMISSION)] _Enable_Emission("Enable Emission", Float) = 0
+        [HideInInspector][HDR] _EmissionColor("Color", Color) = (0,0,0)
+        [Tex(__EMISSION,_EmissionColor)]_EmissionMap("Emission", 2D) = "white" {}
 
         // 卡通描边功能
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
@@ -286,8 +283,6 @@ Shader "Hong/LitCustom"
             #pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON
             #pragma shader_feature_local_fragment _EMISSION
             #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-            #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             // 添加颜色调整功能开关
             #pragma shader_feature_local_fragment _COLOR_ADJUST 
@@ -645,8 +640,6 @@ Shader "Hong/LitCustom"
             #pragma shader_feature_local _PARALLAXMAP
             #pragma shader_feature_local_fragment _COLOR_ADJUST
 
-            #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
 
