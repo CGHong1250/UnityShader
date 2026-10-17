@@ -63,7 +63,6 @@
     <Analyzer Include="C:\Program Files\Unity 2022.3.62f3\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\TutorialInfo\Scripts\Editor\ReadmeEditor.cs" />
     <Compile Include="Assets\Editor\LitShaderCustom.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1050,7 +1049,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp.csproj" />
     <ProjectReference Include="UnityEditor.TestRunner.csproj" />
     <ProjectReference Include="UnityEngine.TestRunner.csproj" />
     <ProjectReference Include="Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.csproj" />

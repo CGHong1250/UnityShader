@@ -1,4 +1,4 @@
-Shader "Universal Render Pipeline/LitCustom"
+Shader "Hong/LitCustom"
 {
     Properties
     {
