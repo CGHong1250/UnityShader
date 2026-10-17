@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.jasonma.lwgui": {
+      "version": "file:D:/BaiduSyncdisk/Study/Unity/LWGUI",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.burst": {
       "version": "1.8.21",
       "depth": 1,

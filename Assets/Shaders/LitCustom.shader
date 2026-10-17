@@ -3,18 +3,22 @@ Shader "Hong/LitCustom"
     Properties
     {
         // Specular vs Metallic workflow
+        [KWEnum(Workflow, Specular, _SPECULAR, Metallic, _METALLIC)]
         _WorkflowMode("WorkflowMode", Float) = 1.0
+        
+        [Space]
+        [Main(MainTeture)]_group1("MainTeture",float)=1
+        [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
+        [HideInInspector] _BaseColor("Color", Color) = (1,1,1,1)
 
-        [MainTexture] _BaseMap("Albedo", 2D) = "white" {}
-        [MainColor] _BaseColor("Color", Color) = (1,1,1,1)
+        [Tex(MainTeture)]_ColorMaskMap("Color Mask (White:Use HSB, Black:Disable)", 2D) = "white" {}
+        [Sub(MainTeture)]_HueShift("Hue Shift", Range(0.0, 1.0)) = 0.0
+        [Sub(MainTeture)]_Saturation("Saturation", Range(0.0, 2.0)) = 1.0
+        [Sub(MainTeture)]_Brightness("Brightness", Range(0.0, 2.0)) = 1.0
 
-        // 主颜色相饱和度亮度控制
-        _ColorMaskMap("Color Mask (White:Use HSB, Black:Disable)", 2D) = "white" {}
-        _HueShift("Hue Shift", Range(0.0, 1.0)) = 0.0
-        _Saturation("Saturation", Range(0.0, 2.0)) = 1.0
-        _Brightness("Brightness", Range(0.0, 2.0)) = 1.0
-
-        _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+        [Title(MainTeture, AlphaTest SamplesToggle)]
+        [SubToggle(MainTeture,_CUT_KEYWORD)] _AlphaTest("Alpha Test", Float) = 0
+        [Sub(MainTeture_CUT_KEYWORD)] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
         _Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
 
@@ -274,6 +278,7 @@ Shader "Hong/LitCustom"
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local _PBRMAP
             #pragma shader_feature_local _COLORMASKMAP
+            #pragma shader_feature_local _CUTOFF_ON
             #pragma shader_feature_local _PARALLAXMAP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
@@ -797,5 +802,6 @@ Shader "Hong/LitCustom"
     }
 
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
-    CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShaderCustom"
+    //CustomEditor "UnityEditor.Rendering.Universal.ShaderGUI.LitShaderCustom"
+    CustomEditor "LWGUI.LWGUI"
 }
