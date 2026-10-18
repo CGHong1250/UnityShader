@@ -24,6 +24,15 @@ half _BumpScale;
 half _Parallax;
 half _OcclusionStrength;
 half _Surface;
+half _RimScale;
+half _RimLightness;
+
+//扭曲和顶点动画相关
+half4 _TilingSpeed;  
+half _WarpStrength;
+half _VertexAnima;
+half4 _AnimaTilingSpeed;
+half _AnimaWarpStrength;
 
 // 色相饱和度亮度参数
 half _HueShift;
@@ -99,6 +108,16 @@ UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
     UNITY_DOTS_INSTANCED_PROP(float , _Parallax)
     UNITY_DOTS_INSTANCED_PROP(float , _OcclusionStrength)
     UNITY_DOTS_INSTANCED_PROP(float , _Surface)
+    UNITY_DOTS_INSTANCED_PROP(float , _RimScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _RimLightness)
+
+    //扭曲和顶点动画相关
+    UNITY_DOTS_INSTANCED_PROP(float4 , _TilingSpeed)
+    UNITY_DOTS_INSTANCED_PROP(float , _WarpStrength)
+    UNITY_DOTS_INSTANCED_PROP(float , _VertexAnima)
+    UNITY_DOTS_INSTANCED_PROP(float4 , _AnimaTilingSpeed)
+    UNITY_DOTS_INSTANCED_PROP(float , _AnimaWarpStrength)
+
     // 添加自定义变量的DOTS实例化
     UNITY_DOTS_INSTANCED_PROP(float , _HueShift)
     UNITY_DOTS_INSTANCED_PROP(float , _Saturation)
@@ -167,6 +186,17 @@ static float  unity_DOTS_Sampled_BumpScale;
 static float  unity_DOTS_Sampled_Parallax;
 static float  unity_DOTS_Sampled_OcclusionStrength;
 static float  unity_DOTS_Sampled_Surface;
+static float  unity_DOTS_Sampled_RimScale;
+static float  unity_DOTS_Sampled_RimLightness;
+
+//扭曲和顶点动画相关
+static float4  unity_DOTS_Sampled_TilingSpeed;
+static float  unity_DOTS_Sampled_WarpStrength;
+static float  unity_DOTS_Sampled_VertexAnima;
+static float4  unity_DOTS_Sampled_AnimaTilingSpeed;
+static float  unity_DOTS_Sampled_AnimaWarpStrength;
+
+
 // 添加自定义变量的DOTS实例化
 static float  unity_DOTS_Sampled_HueShift;
 static float  unity_DOTS_Sampled_Saturation;
@@ -226,6 +256,16 @@ void SetupDOTSLitMaterialPropertyCaches()
     unity_DOTS_Sampled_Parallax             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Parallax);
     unity_DOTS_Sampled_OcclusionStrength    = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _OcclusionStrength);
     unity_DOTS_Sampled_Surface              = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Surface);
+    unity_DOTS_Sampled_RimScale             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _RimScale);
+    unity_DOTS_Sampled_RimLightness         = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _RimLightness);
+
+    //扭曲和顶点动画相关
+    unity_DOTS_Sampled_TilingSpeed          = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4 , _TilingSpeed);
+    unity_DOTS_Sampled_WarpStrength         = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _WarpStrength);
+    unity_DOTS_Sampled_VertexAnima          = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _VertexAnima);
+    unity_DOTS_Sampled_AnimaTilingSpeed     = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4 , _AnimaTilingSpeed);
+    unity_DOTS_Sampled_AnimaWarpStrength    = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _AnimaWarpStrength);
+
     // 颜色调整属性
     unity_DOTS_Sampled_HueShift             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _HueShift);
     unity_DOTS_Sampled_Saturation           = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Saturation);
@@ -293,6 +333,16 @@ void SetupDOTSLitMaterialPropertyCaches()
 #define _Parallax               unity_DOTS_Sampled_Parallax
 #define _OcclusionStrength      unity_DOTS_Sampled_OcclusionStrength
 #define _Surface                unity_DOTS_Sampled_Surface
+#define _RimScale               unity_DOTS_Sampled_RimScale
+#define _RimLightness           unity_DOTS_Sampled_RimLightness
+
+//扭曲和顶点动画相关
+#define _TilingSpeed           unity_DOTS_Sampled_TilingSpeed
+#define _WarpStrength           unity_DOTS_Sampled_WarpStrength
+#define _VertexAnima           unity_DOTS_Sampled_VertexAnima
+#define _AnimaTilingSpeed           unity_DOTS_Sampled_AnimaTilingSpeed
+#define _AnimaWarpStrength           unity_DOTS_Sampled_AnimaWarpStrength
+
 // 颜色调整属性重定向
 #define _HueShift               unity_DOTS_Sampled_HueShift
 #define _Saturation             unity_DOTS_Sampled_Saturation
@@ -354,6 +404,9 @@ TEXTURE2D(_ParallaxMap);
 SAMPLER(sampler_ParallaxMap);
 TEXTURE2D(_ColorMaskMap);      
 SAMPLER(sampler_ColorMaskMap);
+//扭曲和顶点动画相关
+TEXTURE2D(_NoiseTex);      
+SAMPLER(sampler_NoiseTex);
  
 //顶点混合
 // 图层纹理定义 - 使用条件编译防止重复定义
@@ -411,7 +464,7 @@ half4 SampleMetallicSpecGloss()
 half3 SamplePBRMap(float2 uv)
 {
     #ifdef _PBRMAP
-        half3 pbr = SAMPLE_TEXTURE2D(_PBRMap, sampler_PBRMap, uv);
+        half4 pbr = SAMPLE_TEXTURE2D(_PBRMap, sampler_PBRMap, uv);
         half occ = LerpWhiteTo(pbr.b, _OcclusionStrength);
         // r: Metallic, g: Smoothness, b: Occlusion
         return half3(pbr.r * _Metallic, pbr.g * _Smoothness, occ);
@@ -611,6 +664,7 @@ LayerData BlendLayers(LayerData baseLayer, LayerData blendLayer, float blendFact
     return result;
 }
 
+//这个是给其他pass用的，不用改
 inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfaceData)
 {
     // 采样基础纹理
@@ -646,7 +700,8 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
 
     //采样自发光纹理
 #if _EMISSION
-    outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+    half3 emissionCol = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+    outSurfaceData.emission = emissionCol;
 #else
     outSurfaceData.emission = half3(0.0, 0.0, 0.0);
 #endif
@@ -656,7 +711,8 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
     outSurfaceData.clearCoatSmoothness = half(0.0);
 }
 
-inline void InitializeStandardLitSurfaceData(float2 uv, float4 vertexColor, out SurfaceData outSurfaceData)
+//主要的渲染pass
+inline void InitializeStandardLitSurfaceData(float2 uv,float4 vertexColor, out SurfaceData outSurfaceData)
 {
     // 采样基础纹理
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
@@ -788,7 +844,8 @@ inline void InitializeStandardLitSurfaceData(float2 uv, float4 vertexColor, out 
 
     //采样自发光纹理
 #if _EMISSION
-    outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+    half3 emissionCol = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+    outSurfaceData.emission = emissionCol;
 #else
     outSurfaceData.emission = half3(0.0, 0.0, 0.0);
 #endif

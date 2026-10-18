@@ -28,6 +28,7 @@ Material:
   - _COLOR_ADJUST
   - _CUTOFF_ON
   - _EMISSION
+  - _ENABLERIM
   - _ENABLE_LAYER_BLEDN_LAYER02
   - _ENABLE_LAYER_BLEDN_LAYER03
   - _ENABLE_LAYER_BLEDN_LAYER04
@@ -38,6 +39,7 @@ Material:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
   - ENABLE_OUTLINE
+  - _
   - _ALPHATEST
   - _BLENDMODE_ADDITIVE
   - _BLENDMODE_ALPHA
@@ -59,7 +61,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: _Blend _BumpMap _BumpScale
@@ -202,7 +204,7 @@ Material:
     - _Cutoff: 0.481
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnableCutoff: 0
     - _EnableLayerBlend: 1
@@ -213,6 +215,7 @@ Material:
     - _EnableOutline: 0
     - _EnablePBRMap: 1
     - _EnableParallaxMap: 1
+    - _EnableRim: 1
     - _Enable_Emission: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -240,32 +243,34 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RimLightness: 0.74
+    - _RimScale: 2.09
     - _Saturation: 1
     - _SaturationLayerA: 1
     - _SaturationLayerB: 1
     - _SaturationLayerG: 1
     - _SaturationLayerR: 1
-    - _Smoothness: 0.247
+    - _Smoothness: 0.467
     - _SmoothnessLayerA: 0.5
     - _SmoothnessLayerB: 0.5
     - _SmoothnessLayerG: 0.5
     - _SmoothnessLayerR: 0.5
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 1
+    - _Surface: 0
     - _Workflow: 1
     - _WorkflowMode: 1
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - _alphaTest: 0
     - _group1: 1
     - _group2: 0
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 0.16862746}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 1, g: 0.93019235, b: 0, a: 1}
     - _LayerColorA: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorB: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorG: {r: 0, g: 0, b: 0, a: 1}

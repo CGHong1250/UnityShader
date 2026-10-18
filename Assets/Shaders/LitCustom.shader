@@ -3,22 +3,44 @@ Shader "Hong/LitCustom"
     Properties
     {
         // Specular vs Metallic workflow
-        [Main(Workflow)]_Workflow("Workflow",float)=1
-        [KWEnum(Workflow, Specular, _SPECULAR_SETUP, Metallic, _METALLIC)]
+        //[Main(Workflow)]_Workflow("Workflow",float)=1
+        [Preset(LWGUI_Preset_CustomBlendMode)] _Surface("Blend Mode Preset", Float) = 0.0
+        [KWEnum(_, Specular, _SPECULAR_SETUP, Metallic, _METALLIC)]
         _WorkflowMode("WorkflowMode", Float) = 1.0
-        [Sub(Workflow)]_Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
-        [Sub(Workflow_METALLIC)]_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
-        [Sub(Workflow_SPECULAR_SETUP)]_SpecColor("Specular", Color) = (0.2, 0.2, 0.2)
-        [Sub(Workflow)]_OcclusionStrength("Occlusion Strength", Range(0.0, 1.0)) = 1.0
+        [Sub(_)] _BaseColor("Color", Color) = (1,1,1,1)
+        [Sub(_)]_Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
+        [Sub(__METALLIC)]_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
+        [Sub(__SPECULAR_SETUP)]_SpecColor("Specular", Color) = (0.2, 0.2, 0.2)
+        [Sub(_)]_OcclusionStrength("Occlusion Strength", Range(0.0, 1.0)) = 1.0
+
+        // Blending state
+        [Enum(UnityEngine.Rendering.CullMode)]_Cull("Cull", Float) = 2.0
+
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Src Blend", Float) = 5 // 默认 SrcAlpha
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Dst Blend", Float) = 10 // 默认 OneMinusSrcAlpha
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlendAlpha("Src Blend Alpha", Float) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlendAlpha("Dst Blend Alpha", Float) = 10
+        
+        [Toggle(_)]_ZWrite("ZWrite ", Float) = 1
+        [Enum(UnityEngine.Rendering.CompareFunction)]_ZTest("ZTest", Float) = 4 // 4 is LEqual
+        [HideInInspector] _BlendModePreserveSpecular("_BlendModePreserveSpecular", Float) = 1.0
+        [HideInInspector] _AlphaToMask("__alphaToMask", Float) = 0.0
+
+        [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 
         [Main(MainTeture)]_group1("MainTeture",float)=1
         [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
-        [HideInInspector] _BaseColor("Color", Color) = (1,1,1,1)
+
 
         [Tex(MainTeture)]_ColorMaskMap("Color Mask (White:Use HSB, Black:Disable)", 2D) = "white" {}
         [Sub(MainTeture)]_HueShift("Hue Shift", Range(0.0, 1.0)) = 0.0
         [Sub(MainTeture)]_Saturation("Saturation", Range(0.0, 2.0)) = 1.0
         [Sub(MainTeture)]_Brightness("Brightness", Range(0.0, 2.0)) = 1.0
+
+        //perlingNoise
+        [Tex(MainTeture)]_NoiseTex("Noise Texture", 2D) = "white" {}
+        [Sub(MainTeture)]_TilingSpeed("Tiling Speed", vector) = (1,1,0,0)
+        [Sub(VertexAnima)]_WarpStrength("Warp Strength", Float) = 0.1
 
         [SubToggle(MainTeture,_ALPHATEST_ON)] _AlphaTest("Alpha Test", Float) = 0
         [Sub(MainTeture_ALPHATEST_ON)] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
@@ -38,10 +60,13 @@ Shader "Hong/LitCustom"
         [SubToggle(MainTeture,_EMISSION)] _Enable_Emission("Enable Emission", Float) = 0
         [HideInInspector][HDR] _EmissionColor("Color", Color) = (0,0,0)
         [Tex(MainTeture_EMISSION,_EmissionColor)]_EmissionMap("Emission", 2D) = "white" {}
+        [SubToggle(MainTeture,_ENABLERIM)]_EnableRim("Enable Rim", Float) = 1
+        [Sub(MainTeture_ENABLERIM)]_RimScale("Rim Scale", Float) = 1
+        [Sub(MainTeture_ENABLERIM)]_RimLightness("Rim Lightness", Range(0.0, 10.0)) = 1
 
         [Space]
         //顶点混合
-        [Main(LayerBlend)] _EnableLayerBlend("Enable layer blend", Float) = 1
+        [Main(LayerBlend)] _EnableLayerBlend("Layer blend", Float) = 1
         //混合顶点颜色R
         [Tex(LayerBlend,_LayerColorR)]_LayerMapR("BlendMap01", 2D) = "white" {}
         [HideInInspector]_LayerColorR("Color", Color) = (1,1,1,1)
@@ -109,28 +134,17 @@ Shader "Hong/LitCustom"
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_SpecColorLayerA("Specular", Color) = (0.2, 0.2, 0.2)
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_OcclusionStrengthLayerA("Strength", Range(0.0, 1.0)) = 1.0
 
+        //顶点动画功能
+        [Main(VertexAnima)]_VertexAnima("Vertex Anima",float)=1
+        [SubToggle(VertexAnima,_VERTEXANIMA)]_EnableVertexAnima("Enable Vertex Anima",float)=1
+        [Sub(VertexAnima_VERTEXANIMA)]_AnimaTilingSpeed("Anima Tiling Speed", vector) = (1,1,0,0)
+        [Sub(VertexAnima_VERTEXANIMA)]_AnimaWarpStrength("_Anima Warp Strength", Float) = 0.1
+
         // 卡通描边功能
         [Main(Outline)]_Outline("Outline",float)=1
         [SubToggle(Outline,_ENABLE_OUTLINE)] _EnableOutline("Enable Outline", Float) = 0
         [Sub(Outline_ENABLE_OUTLINE)]_OutlineColor("Outline Color", Color) = (0,0,0,1)
         [Sub(Outline_ENABLE_OUTLINE)]_OutlineWidth("Outline Width", Range(0.0, 10)) = 0.03
-
-
-        // Blending state
-        [Preset(LWGUI_Preset_CustomBlendMode)] _Surface("Blend Mode Preset", Float) = 0.0
-        [Enum(UnityEngine.Rendering.CullMode)]_Cull("Cull", Float) = 2.0
-
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Src Blend", Float) = 5 // 默认 SrcAlpha
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Dst Blend", Float) = 10 // 默认 OneMinusSrcAlpha
-        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlendAlpha("Src Blend Alpha", Float) = 1
-        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlendAlpha("Dst Blend Alpha", Float) = 10
-        
-        [Toggle(_)]_ZWrite("ZWrite ", Float) = 1
-        [Enum(UnityEngine.Rendering.CompareFunction)]_ZTest("ZTest", Float) = 4 // 4 is LEqual
-        [HideInInspector] _BlendModePreserveSpecular("_BlendModePreserveSpecular", Float) = 1.0
-        [HideInInspector] _AlphaToMask("__alphaToMask", Float) = 0.0
-
-        [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 
         // ObsoleteProperties
         [HideInInspector] _MainTex("BaseMap", 2D) = "white" {}
@@ -280,10 +294,13 @@ Shader "Hong/LitCustom"
             #pragma shader_feature_local _CUTOFF_ON
             #pragma shader_feature_local _PARALLAXMAP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
+            //顶点动画开关
+            #pragma shader_feature_local  _VERTEXANIMA
             #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON
             #pragma shader_feature_local_fragment _EMISSION
+            #pragma shader_feature_local_fragment _ENABLERIM
             #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _METALLIC
@@ -298,6 +315,8 @@ Shader "Hong/LitCustom"
             #pragma shader_feature_local_fragment _ENABLE_LAYER_BLEDN_LAYER03
             //顶点混合04层开关
             #pragma shader_feature_local_fragment _ENABLE_LAYER_BLEDN_LAYER04
+
+
 
 
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
@@ -472,6 +491,35 @@ Shader "Hong/LitCustom"
                 UNITY_TRANSFER_INSTANCE_ID(input, output);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
+                #ifdef _VERTEXANIMA
+                    //扭曲和顶点动画相关
+                    // 使用对象空间位置和法线（保证物体移动时纹理不会在表面滑动）
+                    float3 posOS = input.positionOS.xyz;
+                    float3 normalOS = input.normalOS;
+                    // 提取 Tiling 和 Speed (假设 xy 是 Tiling，zw 是速度)
+                    float2 tiling = _AnimaTilingSpeed.xy; 
+                    float2 speed = _Time.y * _AnimaTilingSpeed.zw;
+                    //计算三个平面的 UV
+                    float2 uvX = posOS.zy * tiling + speed;
+                    float2 uvY = posOS.xz * tiling + speed;
+                    float2 uvZ = posOS.xy * tiling + speed;
+                    //采样三个平面的噪声值 (使用 LOD 0)
+                    half texX = SAMPLE_TEXTURE2D_LOD(_NoiseTex, sampler_NoiseTex, uvX, 0).r;
+                    half texY = SAMPLE_TEXTURE2D_LOD(_NoiseTex, sampler_NoiseTex, uvY, 0).r;
+                    half texZ = SAMPLE_TEXTURE2D_LOD(_NoiseTex, sampler_NoiseTex, uvZ, 0).r;
+                    //计算混合权重 (基于法线方向)
+                    // 取绝对值，并用 pow 增加对比度，让平面过渡更锐利（可根据需要调整 4.0）
+                    float3 blendWeights = pow(abs(normalOS), 4.0);
+                    // 归一化权重
+                    blendWeights /= (blendWeights.x + blendWeights.y + blendWeights.z);
+                    //混合噪声值
+                    half noiseValue = texX * blendWeights.x + texY * blendWeights.y + texZ * blendWeights.z;
+                    //应用位移
+                    half displacement = (noiseValue - 0.5) * _AnimaWarpStrength;
+                    input.positionOS.xyz += input.normalOS * displacement;
+                    //顶点动画结束
+                #endif
+
                 VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
                 VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
 
@@ -537,12 +585,12 @@ Shader "Hong/LitCustom"
             {
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+            half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
 
             #if defined(_PARALLAXMAP)
             #if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
                 half3 viewDirTS = input.viewDirTS;
             #else
-                half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
                 half3 viewDirTS = GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
             #endif
                 ApplyPerPixelDisplacement(viewDirTS, input.uv);
@@ -566,6 +614,21 @@ Shader "Hong/LitCustom"
             #ifdef _DBUFFER
                 ApplyDecalToSurfaceData(input.positionCS, surfaceData, inputData);
             #endif
+
+            //有一些需要靠后计算的放这里
+            #if _ENABLERIM
+                // 此时 inputData.normalWS 已经包含了法线贴图的效果
+                float3 N = inputData.normalWS;
+                float3 V = inputData.viewDirectionWS;
+                
+                half NdotV = saturate(dot(N, V));
+                // 这里的 3.0 控制边缘光的粗细，你可以把它改成属性暴露出来
+                half rim = pow(1.0 - NdotV, _RimScale) *_RimLightness; 
+                
+                // 叠加到自发光通道（如果你之前设置了 _RimScale）
+                surfaceData.emission *= rim; 
+            #endif
+
 
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
                 color.rgb = MixFog(color.rgb, inputData.fogCoord);
