@@ -37,6 +37,7 @@ Material:
   - _PARALLAXMAP
   - _PBRMAP
   - _SURFACE_TYPE_TRANSPARENT
+  - _VERTEXANIMA
   m_InvalidKeywords:
   - ENABLE_OUTLINE
   - _
@@ -57,6 +58,7 @@ Material:
   - _OUTLINE_ON
   - _SPECULAR
   - _TOGGLE_KEYWORD
+  - _VERTEXANIMA_ON
   - _WORKFLOW_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -136,6 +138,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: b40c5c5d312921b42ba8609ebe6e4ff4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -185,6 +191,7 @@ Material:
     - _AlphaClip: 0
     - _AlphaTest: 0
     - _AlphaToMask: 0
+    - _AnimaWarpStrength: 0.03
     - _Blend: 1
     - _BlendMode: 0
     - _BlendModePreserveSpecular: 1
@@ -216,6 +223,7 @@ Material:
     - _EnablePBRMap: 1
     - _EnableParallaxMap: 1
     - _EnableRim: 1
+    - _EnableVertexAnima: 1
     - _Enable_Emission: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -260,6 +268,8 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _VertexAnima: 1
+    - _WarpStrength: 0.1
     - _Workflow: 1
     - _WorkflowMode: 1
     - _ZTest: 4
@@ -268,9 +278,10 @@ Material:
     - _group1: 1
     - _group2: 0
     m_Colors:
+    - _AnimaTilingSpeed: {r: 0.25, g: 0.25, b: 0.1, a: 0.1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 1, g: 0.93019235, b: 0, a: 1}
+    - _EmissionColor: {r: 1, g: 0.4047007, b: 0, a: 1}
     - _LayerColorA: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorB: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorG: {r: 0, g: 0, b: 0, a: 1}
@@ -281,4 +292,5 @@ Material:
     - _SpecColorLayerB: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerG: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerR: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _TilingSpeed: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
