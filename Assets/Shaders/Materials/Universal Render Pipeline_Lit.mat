@@ -12,11 +12,20 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - ENABLE_OUTLINE
-  - _ALPHAPREMULTIPLY_ON
   - _COLOR_ADJUST
-  - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords: []
+  - _ENABLE_OUTLINE
+  - _METALLIC
+  - _NORMALMAP
+  - _PARALLAXMAP
+  - _PBRMAP
+  m_InvalidKeywords:
+  - ENABLE_OUTLINE
+  - _BLENDMODE_ALPHA
+  - _ENABLENORMALMAP_ON
+  - _GROUP1_ON
+  - _NORMALMAP_ON
+  - _NORMAL_ON
+  - _WORKFLOW_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -149,8 +158,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
+    - _AlphaTest: 0
     - _AlphaToMask: 0
     - _Blend: 0
+    - _BlendMode: 0
     - _BlendModePreserveSpecular: 1
     - _Brightness: 1
     - _BrightnessLayerA: 1
@@ -175,7 +186,11 @@ Material:
     - _EnableLayerBlendLayer02: 0
     - _EnableLayerBlendLayer03: 0
     - _EnableLayerBlendLayer04: 0
+    - _EnableNormalMap: 1
     - _EnableOutline: 1
+    - _EnablePBRMap: 1
+    - _EnableParallaxMap: 1
+    - _Enable_Emission: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -190,11 +205,14 @@ Material:
     - _MetallicLayerB: 0
     - _MetallicLayerG: 0
     - _MetallicLayerR: 0
+    - _NORMALMAP: 1
+    - _Normal: 1
     - _OcclusionStrength: 1
     - _OcclusionStrengthLayerA: 1
     - _OcclusionStrengthLayerB: 1
     - _OcclusionStrengthLayerG: 1
     - _OcclusionStrengthLayerR: 1
+    - _Outline: 0
     - _OutlineWidth: 4.36
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -214,8 +232,11 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _Workflow: 1
     - _WorkflowMode: 1
+    - _ZTest: 4
     - _ZWrite: 0
+    - _group1: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

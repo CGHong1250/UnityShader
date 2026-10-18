@@ -3,10 +3,14 @@ Shader "Hong/LitCustom"
     Properties
     {
         // Specular vs Metallic workflow
-        [KWEnum(Workflow, Specular, _SPECULAR, Metallic, _METALLIC)]
+        [Main(Workflow)]_Workflow("Workflow",float)=1
+        [KWEnum(Workflow, Specular, _SPECULAR_SETUP, Metallic, _METALLIC)]
         _WorkflowMode("WorkflowMode", Float) = 1.0
+        [Sub(Workflow)]_Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
+        [Sub(Workflow_METALLIC)]_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
+        [Sub(Workflow_SPECULAR_SETUP)]_SpecColor("Specular", Color) = (0.2, 0.2, 0.2)
+        [Sub(Workflow)]_OcclusionStrength("Occlusion Strength", Range(0.0, 1.0)) = 1.0
 
-        [Space]
         [Main(MainTeture)]_group1("MainTeture",float)=1
         [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
         [HideInInspector] _BaseColor("Color", Color) = (1,1,1,1)
@@ -16,27 +20,28 @@ Shader "Hong/LitCustom"
         [Sub(MainTeture)]_Saturation("Saturation", Range(0.0, 2.0)) = 1.0
         [Sub(MainTeture)]_Brightness("Brightness", Range(0.0, 2.0)) = 1.0
 
-        [Title(MainTeture, AlphaTest SamplesToggle)]
-        [SubToggle(MainTeture,_CUT_KEYWORD)] _AlphaTest("Alpha Test", Float) = 0
-        [Sub(MainTeture_CUT_KEYWORD)] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
-
-        _Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
-        _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
-        _SpecColor("Specular", Color) = (0.2, 0.2, 0.2)
-        _OcclusionStrength("Occlusion Strength", Range(0.0, 1.0)) = 1.0
+        [SubToggle(MainTeture,_ALPHATEST_ON)] _AlphaTest("Alpha Test", Float) = 0
+        [Sub(MainTeture_ALPHATEST_ON)] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
         [Space]
-        [Tex(_,_BumpScale)]_BumpMap("Normal Map", 2D) = "bump" {}
-        [HideInInspector]_BumpScale("Scale", Float) = 1.0
+        [SubToggle(MainTeture,_NORMALMAP)]_EnableNormalMap("Enable Normal Map",float)=0
+        [Tex(MainTeture_NormalMap,_BumpScale)]_BumpMap("Normal Map", 2D) = "bump" {}
+        [HideInInspector]_BumpScale("Scale", Range(0.0, 5.0)) = 1.0
 
-        [Tex(_)]_PBRMap("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
+        [SubToggle(MainTeture,_PBRMAP)]_EnablePBRMap("Enable PBR Map",float)=0
+        [Tex(MainTeture_PBRMAP)]_PBRMap("PBR Map (R:Metallic, G:Smoothness, B:Occlusion)", 2D) = "white" {}
 
+        [SubToggle(MainTeture,_PARALLAXMAP)]_EnableParallaxMap("Enable Parallax Map",float)=0
         [HideInInspector]_Parallax("Scale", Range(0.005, 0.08)) = 0.005
-        [Tex(_,_Parallax)]_ParallaxMap("Height Map", 2D) = "black" {}
+        [Tex(MainTeture_PARALLAXMAP,_Parallax)]_ParallaxMap("Height Map", 2D) = "black" {}
+
+        [SubToggle(MainTeture,_EMISSION)] _Enable_Emission("Enable Emission", Float) = 0
+        [HideInInspector][HDR] _EmissionColor("Color", Color) = (0,0,0)
+        [Tex(MainTeture_EMISSION,_EmissionColor)]_EmissionMap("Emission", 2D) = "white" {}
 
         [Space]
         //顶点混合
-        [Main(LayerBlend)] _EnableLayerBlend("Enable layer blend", Float) = 0
+        [Main(LayerBlend)] _EnableLayerBlend("Enable layer blend", Float) = 1
         //混合顶点颜色R
         [Tex(LayerBlend,_LayerColorR)]_LayerMapR("BlendMap01", 2D) = "white" {}
         [HideInInspector]_LayerColorR("Color", Color) = (1,1,1,1)
@@ -104,31 +109,28 @@ Shader "Hong/LitCustom"
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_SpecColorLayerA("Specular", Color) = (0.2, 0.2, 0.2)
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_OcclusionStrengthLayerA("Strength", Range(0.0, 1.0)) = 1.0
 
-        [SubToggle(_,_EMISSION)] _Enable_Emission("Enable Emission", Float) = 0
-        [HideInInspector][HDR] _EmissionColor("Color", Color) = (0,0,0)
-        [Tex(__EMISSION,_EmissionColor)]_EmissionMap("Emission", 2D) = "white" {}
-
         // 卡通描边功能
-        _OutlineColor("Outline Color", Color) = (0,0,0,1)
-        _OutlineWidth("Outline Width", Range(0.0, 10)) = 0.03
-        [Toggle(ENABLE_OUTLINE)] _EnableOutline("Enable Outline", Float) = 0
+        [Main(Outline)]_Outline("Outline",float)=1
+        [SubToggle(Outline,_ENABLE_OUTLINE)] _EnableOutline("Enable Outline", Float) = 0
+        [Sub(Outline_ENABLE_OUTLINE)]_OutlineColor("Outline Color", Color) = (0,0,0,1)
+        [Sub(Outline_ENABLE_OUTLINE)]_OutlineWidth("Outline Width", Range(0.0, 10)) = 0.03
+
 
         // Blending state
-        _Surface("__surface", Float) = 0.0
-        _Blend("__blend", Float) = 0.0
-        _Cull("__cull", Float) = 2.0
-        [ToggleUI] _AlphaClip("__clip", Float) = 0.0
-        [HideInInspector] _SrcBlend("__src", Float) = 1.0
-        [HideInInspector] _DstBlend("__dst", Float) = 0.0
-        [HideInInspector] _SrcBlendAlpha("__srcA", Float) = 1.0
-        [HideInInspector] _DstBlendAlpha("__dstA", Float) = 0.0
-        [HideInInspector] _ZWrite("__zw", Float) = 1.0
+        [Preset(LWGUI_Preset_CustomBlendMode)] _Surface("Blend Mode Preset", Float) = 0.0
+        [Enum(UnityEngine.Rendering.CullMode)]_Cull("Cull", Float) = 2.0
+
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlend("Src Blend", Float) = 5 // 默认 SrcAlpha
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlend("Dst Blend", Float) = 10 // 默认 OneMinusSrcAlpha
+        [Enum(UnityEngine.Rendering.BlendMode)] _SrcBlendAlpha("Src Blend Alpha", Float) = 1
+        [Enum(UnityEngine.Rendering.BlendMode)] _DstBlendAlpha("Dst Blend Alpha", Float) = 10
+        
+        [Toggle(_)]_ZWrite("ZWrite ", Float) = 1
+        [Enum(UnityEngine.Rendering.CompareFunction)]_ZTest("ZTest", Float) = 4 // 4 is LEqual
         [HideInInspector] _BlendModePreserveSpecular("_BlendModePreserveSpecular", Float) = 1.0
         [HideInInspector] _AlphaToMask("__alphaToMask", Float) = 0.0
 
         [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
-        // Editmode props
-        _QueueOffset("Queue offset", Float) = 0.0
 
         // ObsoleteProperties
         [HideInInspector] _MainTex("BaseMap", 2D) = "white" {}
@@ -172,7 +174,7 @@ Shader "Hong/LitCustom"
             #pragma target 2.0
             #pragma vertex OutlineVertex
             #pragma fragment OutlineFragment
-            #pragma shader_feature_local ENABLE_OUTLINE
+            #pragma shader_feature_local _ENABLE_OUTLINE
             
             #pragma multi_compile_instancing
             #include_with_pragmas "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl"
@@ -204,7 +206,7 @@ Shader "Hong/LitCustom"
                 UNITY_TRANSFER_INSTANCE_ID(input, output);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
                 
-                #ifdef ENABLE_OUTLINE
+                #ifdef _ENABLE_OUTLINE
                     // 使用UnityObjectToClipPos来获取裁剪空间位置
                     float4 positionCS = TransformObjectToHClip(input.positionOS.xyz);
                     
@@ -243,7 +245,7 @@ Shader "Hong/LitCustom"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 
-                #ifdef ENABLE_OUTLINE
+                #ifdef _ENABLE_OUTLINE
                     return _OutlineColor;
                 #else
                     discard;
@@ -261,7 +263,7 @@ Shader "Hong/LitCustom"
                 "LightMode" = "UniversalForward"
             }
 
-            Blend[_SrcBlend][_DstBlend], [_SrcBlendAlpha][_DstBlendAlpha]
+            Blend[_SrcBlend][_DstBlend]
             ZWrite[_ZWrite]
             Cull[_Cull]
             AlphaToMask[_AlphaToMask]
@@ -284,6 +286,7 @@ Shader "Hong/LitCustom"
             #pragma shader_feature_local_fragment _EMISSION
             #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local_fragment _METALLIC
             // 添加颜色调整功能开关
             #pragma shader_feature_local_fragment _COLOR_ADJUST 
 

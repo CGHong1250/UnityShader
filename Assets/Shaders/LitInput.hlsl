@@ -615,7 +615,7 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
 {
     // 采样基础纹理
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
-    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);
+    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor.a, _Cutoff);
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
     
     // 应用颜色调整，传入uv用于采样Mask
@@ -660,7 +660,7 @@ inline void InitializeStandardLitSurfaceData(float2 uv, float4 vertexColor, out 
 {
     // 采样基础纹理
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
-    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);
+    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor.a, _Cutoff);
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
     
     // 应用颜色调整，传入uv用于采样Mask
