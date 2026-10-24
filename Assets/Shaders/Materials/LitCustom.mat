@@ -25,12 +25,12 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHATEST_ON
   - _COLOR_ADJUST
   - _CUTOFF_ON
   - _EMISSION
   - _SPECULAR_SETUP
   m_InvalidKeywords:
+  - _
   - _ALPHATEST
   - _CUTOFF
   - _CUTOFF_NO
@@ -39,16 +39,17 @@ Material:
   - _ENABLE_EMISSION
   - _GROUP1_ON
   - _GROUP2_ON
-  - _METALLIC
+  - _OUTLINE_ON
   - _SPECULAR
   - _TOGGLE_KEYWORD
+  - _VERTEXANIMA_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _SrcBlend
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -116,7 +117,15 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MatcapTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -169,6 +178,7 @@ Material:
     - _AlphaClip: 0
     - _AlphaTest: 0
     - _AlphaToMask: 0
+    - _AnimaWarpStrength: 0.1
     - _Blend: 0.51
     - _BlendModePreserveSpecular: 1
     - _Brightness: 2
@@ -194,7 +204,13 @@ Material:
     - _EnableLayerBlendLayer02: 0
     - _EnableLayerBlendLayer03: 0
     - _EnableLayerBlendLayer04: 0
+    - _EnableMatcap: 0
+    - _EnableNormalMap: 0
     - _EnableOutline: 0
+    - _EnablePBRMap: 0
+    - _EnableParallaxMap: 0
+    - _EnableRim: 0
+    - _EnableVertexAnima: 0
     - _Enable_Emission: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -205,6 +221,8 @@ Material:
     - _HueShiftLayerB: 0
     - _HueShiftLayerG: 0
     - _HueShiftLayerR: 0
+    - _MatcapIntensity: 1
+    - _MatcapScale: 1
     - _Metallic: 0
     - _MetallicLayerA: 0
     - _MetallicLayerB: 0
@@ -215,16 +233,19 @@ Material:
     - _OcclusionStrengthLayerB: 1
     - _OcclusionStrengthLayerG: 1
     - _OcclusionStrengthLayerR: 0
+    - _Outline: 1
     - _OutlineWidth: 0.03
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RimLightness: 1
+    - _RimScale: 1
     - _Saturation: 1
     - _SaturationLayerA: 1
     - _SaturationLayerB: 1
     - _SaturationLayerG: 1
     - _SaturationLayerR: 1
-    - _Smoothness: 0.581
+    - _Smoothness: 0.372
     - _SmoothnessLayerA: 0.5
     - _SmoothnessLayerB: 0.5
     - _SmoothnessLayerG: 0.5
@@ -234,23 +255,29 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _VertexAnima: 1
+    - _WarpStrength: 0.1
     - _WorkflowMode: 0
+    - _ZTest: 4
     - _ZWrite: 1
     - _alphaTest: 0
     - _group1: 1
     - _group2: 0
     m_Colors:
+    - _AnimaTilingSpeed: {r: 1, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 0.3886792, g: 0.3886792, b: 0.3886792, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0.90188676, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorA: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorB: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorG: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorR: {r: 0, g: 0, b: 0, a: 1}
+    - _MatcapOffset: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecColor: {r: 0.07924521, g: 0.07924521, b: 0.07924521, a: 1}
     - _SpecColorLayerA: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerB: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerG: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerR: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _TilingSpeed: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
