@@ -27,6 +27,7 @@ Material:
   m_ValidKeywords:
   - _COLOR_ADJUST
   - _ENABLEFOAM
+  - _MATCAP_ON
   - _NORMALMAP
   - _SPECULAR_SETUP
   - _SURFACE_TYPE_TRANSPARENT
@@ -130,7 +131,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatcapTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: bdb5f8e7488b87a40a74de1b9c24eddc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -227,7 +228,7 @@ Material:
     - _EnableLayerBlendLayer02: 0
     - _EnableLayerBlendLayer03: 0
     - _EnableLayerBlendLayer04: 0
-    - _EnableMatcap: 0
+    - _EnableMatcap: 1
     - _EnableNormalMap: 1
     - _EnableOutline: 0
     - _EnablePBRMap: 0
@@ -251,7 +252,7 @@ Material:
     - _HueShiftLayerB: 0
     - _HueShiftLayerG: 0
     - _HueShiftLayerR: 0
-    - _MatcapIntensity: 1
+    - _MatcapIntensity: 1.4
     - _MatcapScale: 1
     - _Metallic: 0
     - _MetallicLayerA: 0
