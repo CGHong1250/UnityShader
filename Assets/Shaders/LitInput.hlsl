@@ -27,6 +27,11 @@ half _Surface;
 half _RimScale;
 half _RimLightness;
 
+// MatCap
+half _MatcapIntensity;
+half _MatcapScale;
+float4 _MatcapOffset;
+
 //扭曲和顶点动画相关
 half4 _TilingSpeed;  
 half _WarpStrength;
@@ -111,6 +116,11 @@ UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
     UNITY_DOTS_INSTANCED_PROP(float , _RimScale)
     UNITY_DOTS_INSTANCED_PROP(float , _RimLightness)
 
+    // MatCap
+    UNITY_DOTS_INSTANCED_PROP(float , _MatcapIntensity)
+    UNITY_DOTS_INSTANCED_PROP(float , _MatcapScale)
+    UNITY_DOTS_INSTANCED_PROP(float4, _MatcapOffset)
+
     //扭曲和顶点动画相关
     UNITY_DOTS_INSTANCED_PROP(float4 , _TilingSpeed)
     UNITY_DOTS_INSTANCED_PROP(float , _WarpStrength)
@@ -189,6 +199,11 @@ static float  unity_DOTS_Sampled_Surface;
 static float  unity_DOTS_Sampled_RimScale;
 static float  unity_DOTS_Sampled_RimLightness;
 
+// MatCap
+static float  unity_DOTS_Sampled_MatcapIntensity;
+static float  unity_DOTS_Sampled_MatcapScale;
+static float4  unity_DOTS_Sampled_MatcapOffset;
+
 //扭曲和顶点动画相关
 static float4  unity_DOTS_Sampled_TilingSpeed;
 static float  unity_DOTS_Sampled_WarpStrength;
@@ -258,6 +273,11 @@ void SetupDOTSLitMaterialPropertyCaches()
     unity_DOTS_Sampled_Surface              = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Surface);
     unity_DOTS_Sampled_RimScale             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _RimScale);
     unity_DOTS_Sampled_RimLightness         = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _RimLightness);
+
+    // MatCap
+    unity_DOTS_Sampled_MatcapIntensity             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _MatcapIntensity);
+    unity_DOTS_Sampled_MatcapScale             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _MatcapScale);
+    unity_DOTS_Sampled_MatcapOffset         = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4 , _MatcapOffset);
 
     //扭曲和顶点动画相关
     unity_DOTS_Sampled_TilingSpeed          = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4 , _TilingSpeed);
@@ -336,6 +356,11 @@ void SetupDOTSLitMaterialPropertyCaches()
 #define _RimScale               unity_DOTS_Sampled_RimScale
 #define _RimLightness           unity_DOTS_Sampled_RimLightness
 
+// MatCap
+#define _MatcapIntensity                unity_DOTS_Sampled_MatcapIntensity
+#define _MatcapScale               unity_DOTS_Sampled_MatcapScale
+#define _MatcapOffset           unity_DOTS_Sampled_MatcapOffset
+
 //扭曲和顶点动画相关
 #define _TilingSpeed           unity_DOTS_Sampled_TilingSpeed
 #define _WarpStrength           unity_DOTS_Sampled_WarpStrength
@@ -407,6 +432,9 @@ SAMPLER(sampler_ColorMaskMap);
 //扭曲和顶点动画相关
 TEXTURE2D(_NoiseTex);      
 SAMPLER(sampler_NoiseTex);
+// MatCap
+TEXTURE2D(_MatcapTex);
+SAMPLER(sampler_MatcapTex);
  
 //顶点混合
 // 图层纹理定义 - 使用条件编译防止重复定义
@@ -855,5 +883,37 @@ inline void InitializeStandardLitSurfaceData(float2 uv,float4 vertexColor, out S
     outSurfaceData.clearCoatSmoothness = half(0.0);
 }
 
+
+// ================= MatCap 工具函数 =================
+void ApplyMatCap(inout SurfaceData surfaceData, float3 normalWS, float3 viewDirWS)
+{
+    // 防止 viewDir 和上方向平行导致叉乘为0
+    half3 worldUp = abs(viewDirWS.y) > 0.999 ? half3(0.0, 0.0, 1.0) : half3(0.0, 1.0, 0.0);
+    
+    half3 viewRight = normalize(cross(worldUp, viewDirWS));
+    half3 viewUp = normalize(cross(viewDirWS, viewRight));
+
+    // 计算切线空间的法线方向
+    half3 normalInView;
+    normalInView.x = dot(normalWS, viewRight);
+    normalInView.y = dot(normalWS, viewUp);
+    normalInView.z = dot(normalWS, viewDirWS);
+
+    // 计算 UV
+    half2 matcapUV = normalInView.xy * 0.5 + 0.5;
+    matcapUV.y = 1.0 - matcapUV.y; // Unity Y轴翻转
+    
+    matcapUV = (matcapUV - 0.5) * _MatcapScale + 0.5;
+    matcapUV += _MatcapOffset.xy;
+    matcapUV = clamp(matcapUV, 0.001, 0.999);
+
+    // 采样 Matcap 贴图（记得在 Unity 里把贴图的 sRGB 勾上）
+    half3 matcapColor = SAMPLE_TEXTURE2D(_MatcapTex, sampler_MatcapTex, matcapUV).rgb;
+    matcapColor *= _MatcapIntensity;
+    
+    // 融合到 Albedo 中 (原版 Cocos 算法)
+    surfaceData.albedo = surfaceData.albedo + surfaceData.albedo * matcapColor;
+}
+// ====================================================
 
 #endif // UNIVERSAL_INPUT_SURFACE_PBR_INCLUDED

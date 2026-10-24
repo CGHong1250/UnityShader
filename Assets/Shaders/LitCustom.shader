@@ -45,7 +45,7 @@ Shader "Hong/LitCustom"
         [SubToggle(MainTeture,_ALPHATEST_ON)] _AlphaTest("Alpha Test", Float) = 0
         [Sub(MainTeture_ALPHATEST_ON)] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
-        [Space]
+
         [SubToggle(MainTeture,_NORMALMAP)]_EnableNormalMap("Enable Normal Map",float)=0
         [Tex(MainTeture_NormalMap,_BumpScale)]_BumpMap("Normal Map", 2D) = "bump" {}
         [HideInInspector]_BumpScale("Scale", Range(0.0, 5.0)) = 1.0
@@ -64,7 +64,13 @@ Shader "Hong/LitCustom"
         [Sub(MainTeture_ENABLERIM)]_RimScale("Rim Scale", Float) = 1
         [Sub(MainTeture_ENABLERIM)]_RimLightness("Rim Lightness", Range(0.0, 10.0)) = 1
 
-        [Space]
+        // MatCap
+        [SubToggle(MainTeture,_MATCAP_ON)] _EnableMatcap("Enable Matcap", Float) = 0
+        [Tex(MainTeture_MATCAP_ON)] _MatcapTex("Matcap Tex", 2D) = "black" {}
+        [Sub(MainTeture_MATCAP_ON)] _MatcapIntensity("Matcap Intensity", Range(0.0, 32.0)) = 1.0
+        [Sub(MainTeture_MATCAP_ON)] _MatcapScale("Matcap Scale", Float) = 1.0
+        [Sub(MainTeture_MATCAP_ON)] _MatcapOffset("Matcap Offset", Vector) = (0,0,0,0)
+
         //顶点混合
         [Main(LayerBlend)] _EnableLayerBlend("Layer blend", Float) = 1
         //混合顶点颜色R
@@ -290,6 +296,7 @@ Shader "Hong/LitCustom"
 
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local _PBRMAP
+            #pragma shader_feature_local _MATCAP_ON
             #pragma shader_feature_local _COLORMASKMAP
             #pragma shader_feature_local _CUTOFF_ON
             #pragma shader_feature_local _PARALLAXMAP
@@ -615,6 +622,11 @@ Shader "Hong/LitCustom"
                 ApplyDecalToSurfaceData(input.positionCS, surfaceData, inputData);
             #endif
 
+            // MatCap
+            #if defined(_MATCAP_ON)
+                ApplyMatCap(surfaceData, inputData.normalWS, inputData.viewDirectionWS);
+            #endif
+
             //有一些需要靠后计算的放这里
             #if _ENABLERIM
                 // 此时 inputData.normalWS 已经包含了法线贴图的效果
@@ -628,6 +640,8 @@ Shader "Hong/LitCustom"
                 // 叠加到自发光通道（如果你之前设置了 _RimScale）
                 surfaceData.emission *= rim; 
             #endif
+
+
 
 
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
