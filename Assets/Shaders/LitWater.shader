@@ -32,6 +32,9 @@ Shader "Hong/LitWater"
         [Tex(MainTeture_NORMALMAP,_BumpScale)]_BumpMap("Normal Map", 2D) = "bump" {}
         [HideInInspector]_BumpScale("Normal Intensity", Range(0, 2)) = 1
         [Sub(MainTeture)]_NormalTiling("Normal Tiling", float) = 1
+        [Tex(MainTeture)] _PerlingNoise("PerlingNoise", 2D) = "black" {}
+        [Tex(MainTeture)] _CausticTexture("Caustic Texture", 2D) = "black" {}
+        [Tex(MainTeture)] _FlowMap("Flow (RG, A noise)", 2D) = "black" {}
         
         [HideInInspector] _AlphaTest("Alpha Test", Float) = 0
         [HideInInspector] _Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
@@ -52,6 +55,7 @@ Shader "Hong/LitWater"
         [Main(WaterSettings)] _WaterSettings("Water Settings", Float) = 1
         
         // 深度与颜色
+        
         [Sub(WaterSettings)] _ShallowWater("Shallow Color", Color) = (1.0, 1.0, 1.0, 1.0)
         [Sub(WaterSettings)] _DeepWater("Deep Color", Color) = (1.0, 1.0, 1.0, 1.0)
         [Sub(WaterSettings)] _DepthDistance("Depth Distance", Range(0,10)) = 2
@@ -67,13 +71,11 @@ Shader "Hong/LitWater"
         [Sub(WaterSettings_ENABLEFOAM)] _FoamWaveNumber("Foam Wave Number", Range(0, 3)) = 2
 
         // 焦散 (Caustic)
-        [Tex(WaterSettings)] _CausticTexture("Caustic Texture", 2D) = "black" {}
         [Sub(WaterSettings)] _CausticIntensity("Caustic Intensity", Range(0, 10)) = 1.0
         [Sub(WaterSettings)] _CausticScale("Caustic Scale", Float) = 1.0
         [Sub(WaterSettings)] _CausticSpeed("Caustic Speed", Float) = 0.1
         
         // 流动贴图
-        [Tex(WaterSettings)] _FlowMap("Flow (RG, A noise)", 2D) = "black" {}
         [Sub(WaterSettings)] _UJump("U Jump", Range(-0.25, 0.25)) = 0.25
         [Sub(WaterSettings)] _VJump("V Jump", Range(-0.25, 0.25)) = 0.25
         [Sub(WaterSettings)] _FlowMapTiling("Flow Tiling", Float) = 1
@@ -351,9 +353,9 @@ Shader "Hong/LitWater"
                     float2 foamUV1 = worUV * _FoamTiling - float2(gradientWave * 0.5, 0.0) + flowSpeed;
                     float2 foamUV2 = worUV * _FoamTiling + flowSpeed;
 
-                    // 沿用 FlowMap 采样噪声
-                    half noise1 = SAMPLE_TEXTURE2D(_FlowMap, sampler_FlowMap, foamUV1).r;
-                    half noise2 = SAMPLE_TEXTURE2D(_FlowMap, sampler_FlowMap, foamUV2).r;
+                    //采样噪声
+                    half noise1 = SAMPLE_TEXTURE2D(_PerlingNoise, sampler_PerlingNoise, foamUV1).r;
+                    half noise2 = SAMPLE_TEXTURE2D(_PerlingNoise, sampler_PerlingNoise, foamUV2).r;
 
                     float edgeWidth = 0.02;
                     float foamMask = 0.0;
@@ -380,7 +382,7 @@ Shader "Hong/LitWater"
                 float2 refractOffset = viewNormal.xy * _Refraction * 0.1;
                 // 让 FlowMap 的 UV 随时间缓慢滚动，产生持续的扭曲扰动
                 float2 flowNoiseUV = input.uv * _FlowMapTiling + _Time.y * _Speed * 0.1; 
-                float2 flowNoise = SAMPLE_TEXTURE2D(_FlowMap, sampler_FlowMap, flowNoiseUV).rg;
+                float2 flowNoise = SAMPLE_TEXTURE2D(_PerlingNoise, sampler_PerlingNoise, flowNoiseUV).rg;
                 // 将 0~1 的 RG 映射到 -1~1，并乘以扭曲强度
                 float2 distortOffset = (flowNoise * 2.0 - 1.0) * _DistortStrength;
 

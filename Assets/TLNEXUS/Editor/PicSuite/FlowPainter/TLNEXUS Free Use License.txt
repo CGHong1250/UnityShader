@@ -1,0 +1,87 @@
+TLNEXUS Editor Extensions Free Use License
+Version 1.0 — Effective 2025-01-01
+
+版权所有 © 2025–2026 TLNEXUS。保留所有权利。
+
+本许可适用于 TLNEXUS 发布的编辑器扩展及其发布包中的 DLL、资源、文档和其他附随材料（以下统称“软件”）。
+
+一、授权
+
+在遵守本许可的前提下，TLNEXUS 授予您一项免费的、非排他的、不可转让、不可再许可的使用权。您可以：
+
+1. 在个人、教育、内部或商业项目中安装和使用本软件；
+2. 将本软件随您的项目、应用程序或游戏一同发布，但不得将本软件作为独立产品、独立下载项或主要价值进行提供；
+3. 为备份和部署目的复制本软件。
+
+二、限制
+
+除适用法律明确允许的范围外，您不得：
+
+1. 单独出售、出租、出租转让、再许可、重新打包发布或以其他方式分发本软件；
+2. 移除、隐藏或修改本软件中的 TLNEXUS 名称、版权、商标、版本或其他权利声明；
+3. 将修改、反编译、反汇编或衍生的版本作为 TLNEXUS 官方软件或官方更新发布；
+4. 声称您拥有本软件或其任何组成部分的著作权、商标权或其他知识产权；
+5. 将本软件用于违反适用法律的用途。
+
+三、源码与知识产权
+
+本许可不授予软件源码、商标、名称或任何未明确列出的权利。软件及其全部知识产权仍归 TLNEXUS 所有。
+
+四、免责声明与责任限制
+
+本软件按“现状”和“现有”基础提供，不附带任何明示或默示保证，包括适销性、特定用途适用性和不侵权保证。在适用法律允许的最大范围内，TLNEXUS 不对因使用或无法使用本软件导致的任何直接、间接、附带、特殊、惩罚性或后果性损失承担责任。
+
+五、终止
+
+如您违反本许可，本许可自动终止。终止后，您必须停止使用和分发本软件，并删除您控制下的所有副本。
+
+六、其他
+
+本许可构成您与 TLNEXUS 就软件使用达成的完整协议。TLNEXUS 可在后续版本中更新本许可；新版本仅适用于其随附的软件版本。
+
+如有疑问，请通过 TLNEXUS 官方网站联系发布者。
+
+----------------------------------------------------------------
+
+TLNEXUS Editor Extensions Free Use License
+Version 1.0 — Effective 2025-01-01
+
+Copyright © 2025–2026 TLNEXUS. All rights reserved.
+
+This license applies to editor extensions published by TLNEXUS and all DLLs, assets, documentation, and other accompanying materials in their distributions (collectively, the “Software”).
+
+1. Grant
+
+Subject to this license, TLNEXUS grants you a free, non-exclusive, non-transferable, non-sublicensable license to:
+
+a. install and use the Software in personal, educational, internal, and commercial projects;
+b. distribute the Software with your project, application, or game, provided that the Software is not offered as a standalone product, standalone download, or the primary value of the offering; and
+c. make copies of the Software for backup and deployment purposes.
+
+2. Restrictions
+
+Except where applicable law expressly permits it, you may not:
+
+a. sell, rent, lease, sublicense, repackage, or otherwise distribute the Software on a standalone basis;
+b. remove, obscure, or alter any TLNEXUS name, copyright, trademark, version, or other proprietary notice in the Software;
+c. present any modified, decompiled, disassembled, or derivative version as official TLNEXUS software or an official update;
+d. claim copyright, trademark, or other intellectual-property ownership of the Software or any part of it; or
+e. use the Software in violation of applicable law.
+
+3. Source Code and Intellectual Property
+
+This license grants no rights to the Software source code, trademarks, names, or any right not expressly granted above. The Software and all intellectual-property rights in it remain the property of TLNEXUS.
+
+4. Disclaimer and Limitation of Liability
+
+THE SOFTWARE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, TLNEXUS SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR CONSEQUENTIAL DAMAGES ARISING FROM THE USE OF OR INABILITY TO USE THE SOFTWARE.
+
+5. Termination
+
+This license terminates automatically if you violate its terms. Upon termination, you must stop using and distributing the Software and delete all copies under your control.
+
+6. Miscellaneous
+
+This license is the entire agreement concerning your use of the Software. TLNEXUS may update this license for future releases; an updated license applies only to the Software version distributed with it.
+
+For questions, contact the publisher through the official TLNEXUS website.

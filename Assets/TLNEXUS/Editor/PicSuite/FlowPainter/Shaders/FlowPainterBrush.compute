@@ -1,0 +1,140 @@
+#pragma kernel UploadPixels
+#pragma kernel BuildBrushWeights
+#pragma kernel PaintStroke
+
+struct BrushStamp
+{
+    float2 center;
+    float2 flow;
+};
+
+RWTexture2D<float4> _FlowMap;
+StructuredBuffer<uint> _SourcePixels;
+StructuredBuffer<BrushStamp> _Stamps;
+RWStructuredBuffer<float> _BrushWeights;
+
+int2 _TextureSize;
+int2 _DispatchOrigin;
+int _StampCount;
+int _BrushRadius;
+int _WeightCount;
+float _FalloffExponent;
+float _BrushStrength;
+int _Erase;
+int _WrapHorizontal;
+int _WrapVertical;
+
+float2 EncodeFlow(float2 flow)
+{
+    flow = clamp(flow, -0.5, 0.5);
+    return floor(saturate(0.5 - flow) * 255.0 + 0.5) / 255.0;
+}
+
+[numthreads(8, 8, 1)]
+void UploadPixels(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_TextureSize.x || id.y >= (uint)_TextureSize.y)
+    {
+        return;
+    }
+
+    uint index = id.y * (uint)_TextureSize.x + id.x;
+    uint packed = _SourcePixels[index];
+    float4 color = float4(
+        packed & 255u,
+        (packed >> 8u) & 255u,
+        (packed >> 16u) & 255u,
+        (packed >> 24u) & 255u) / 255.0;
+    _FlowMap[int2(id.xy)] = color;
+}
+
+[numthreads(256, 1, 1)]
+void BuildBrushWeights(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_WeightCount)
+    {
+        return;
+    }
+
+    float normalizedDistance = sqrt((float)id.x) / _BrushRadius;
+    _BrushWeights[id.x] = pow(max(0.0, 1.0 - normalizedDistance), _FalloffExponent);
+}
+
+[numthreads(8, 8, 1)]
+void PaintStroke(uint3 id : SV_DispatchThreadID)
+{
+    int2 pixel = int2(id.xy) + _DispatchOrigin;
+    if (pixel.x < 0 || pixel.y < 0 || pixel.x >= _TextureSize.x || pixel.y >= _TextureSize.y)
+    {
+        return;
+    }
+
+    float2 encoded = _FlowMap[pixel].rg;
+    float2 currentFlow = 0.5 - encoded;
+    float combinedWeight = 0.0;
+    float2 accumulatedFlow = 0.0;
+    float radiusSquared = (float)(_BrushRadius * _BrushRadius);
+    bool quantizeEachStamp = _WrapHorizontal != 0 || _WrapVertical != 0;
+
+    for (int stampIndex = 0; stampIndex < _StampCount; stampIndex++)
+    {
+        BrushStamp stamp = _Stamps[stampIndex];
+        float2 delta = abs((float2)pixel - stamp.center);
+        if (_WrapHorizontal != 0 && _TextureSize.x > 1)
+        {
+            delta.x = min(delta.x, (_TextureSize.x - 1) - delta.x);
+        }
+
+        if (_WrapVertical != 0 && _TextureSize.y > 1)
+        {
+            delta.y = min(delta.y, (_TextureSize.y - 1) - delta.y);
+        }
+
+        float distanceSquared = dot(delta, delta);
+        if (distanceSquared > radiusSquared)
+        {
+            continue;
+        }
+
+        uint distanceIndex = (uint)(distanceSquared + 0.5);
+        float contribution = _BrushWeights[distanceIndex] * _BrushStrength;
+        if (contribution <= 0.0)
+        {
+            continue;
+        }
+
+        if (quantizeEachStamp)
+        {
+            float2 target = _Erase != 0 ? 0.0 : stamp.flow;
+            currentFlow = lerp(currentFlow, target, contribution);
+            currentFlow = 0.5 - EncodeFlow(currentFlow);
+            continue;
+        }
+
+        float remaining = 1.0 - contribution;
+        combinedWeight = 1.0 - (1.0 - combinedWeight) * remaining;
+        if (_Erase == 0)
+        {
+            accumulatedFlow = accumulatedFlow * remaining + stamp.flow * contribution;
+        }
+    }
+
+    if (quantizeEachStamp)
+    {
+        _FlowMap[pixel] = float4(EncodeFlow(currentFlow), 1.0, 1.0);
+        return;
+    }
+
+    if (combinedWeight <= 0.0)
+    {
+        return;
+    }
+
+    float2 nextFlow = currentFlow * (1.0 - combinedWeight);
+    if (_Erase == 0)
+    {
+        nextFlow += accumulatedFlow;
+    }
+
+    _FlowMap[pixel] = float4(EncodeFlow(nextFlow), 1.0, 1.0);
+}

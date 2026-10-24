@@ -51,6 +51,7 @@ CBUFFER_START(UnityPerMaterial)
 
 CBUFFER_END
 
+TEXTURE2D(_PerlingNoise); SAMPLER(sampler_PerlingNoise);
 TEXTURE2D(_MatcapTex); SAMPLER(sampler_MatcapTex);
 TEXTURE2D(_FlowMap); SAMPLER(sampler_FlowMap); // 水的流动贴图
 TEXTURE2D(_CausticTexture); SAMPLER(sampler_CausticTexture);
