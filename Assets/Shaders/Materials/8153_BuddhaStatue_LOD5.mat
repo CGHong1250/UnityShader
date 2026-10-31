@@ -31,6 +31,7 @@ Material:
   - _ENABLE_LAYER_BLEDN_LAYER02
   - _ENABLE_LAYER_BLEDN_LAYER03
   - _ENABLE_LAYER_BLEDN_LAYER04
+  - _MATCAP_ON
   - _NORMALMAP
   - _PARALLAXMAP
   - _PBRMAP
@@ -133,7 +134,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatcapTex:
-        m_Texture: {fileID: 2800000, guid: 841e1fb05d1862b43b74c15bab8a5974, type: 3}
+        m_Texture: {fileID: 2800000, guid: a3ce22e14f0cf054fbc0f6b403e37a90, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -220,7 +221,7 @@ Material:
     - _EnableLayerBlendLayer02: 1
     - _EnableLayerBlendLayer03: 1
     - _EnableLayerBlendLayer04: 1
-    - _EnableMatcap: 0
+    - _EnableMatcap: 1
     - _EnableNormalMap: 1
     - _EnableOutline: 0
     - _EnablePBRMap: 1
@@ -291,7 +292,7 @@ Material:
     - _LayerColorB: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorG: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorR: {r: 0.735849, g: 0.09857601, b: 0.09857601, a: 1}
-    - _MatcapOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _MatcapOffset: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.5169811, g: 0.5169811, b: 0.5169811, a: 1}
     - _SpecColorLayerA: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}

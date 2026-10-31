@@ -30,6 +30,7 @@ Shader "Hong/LitCustom"
 
         [Main(MainTeture)]_group1("MainTeture",float)=1
         [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
+        [Sub(MainTeture)] _BaseMap_ST("Tiling Offset", vector) = (1,1,0,0)
 
 
         [Tex(MainTeture)]_ColorMaskMap("Color Mask (White:Use HSB, Black:Disable)", 2D) = "white" {}
@@ -39,7 +40,7 @@ Shader "Hong/LitCustom"
 
         //perlingNoise
         [Tex(MainTeture)]_NoiseTex("Noise Texture", 2D) = "white" {}
-        [Sub(MainTeture)]_TilingSpeed("Tiling Speed", vector) = (1,1,0,0)
+        [Sub(MainTeture)]_TilingSpeed("Noise Tiling Speed", vector) = (1,1,0,0)
         [Sub(VertexAnima)]_WarpStrength("Warp Strength", Float) = 0.1
 
         [SubToggle(MainTeture,_ALPHATEST_ON)] _AlphaTest("Alpha Test", Float) = 0
@@ -60,7 +61,7 @@ Shader "Hong/LitCustom"
         [SubToggle(MainTeture,_EMISSION)] _Enable_Emission("Enable Emission", Float) = 0
         [HideInInspector][HDR] _EmissionColor("Color", Color) = (0,0,0)
         [Tex(MainTeture_EMISSION,_EmissionColor)]_EmissionMap("Emission", 2D) = "white" {}
-        [SubToggle(MainTeture,_ENABLERIM)]_EnableRim("Enable Rim", Float) = 1
+        [SubToggle(MainTeture_EMISSION,_ENABLERIM)]_EnableRim("Enable Rim", Float) = 1
         [Sub(MainTeture_ENABLERIM)]_RimScale("Rim Scale", Float) = 1
         [Sub(MainTeture_ENABLERIM)]_RimLightness("Rim Lightness", Range(0.0, 10.0)) = 1
 
@@ -69,13 +70,14 @@ Shader "Hong/LitCustom"
         [Tex(MainTeture_MATCAP_ON)] _MatcapTex("Matcap Tex", 2D) = "black" {}
         [Sub(MainTeture_MATCAP_ON)] _MatcapIntensity("Matcap Intensity", Range(0.0, 32.0)) = 1.0
         [Sub(MainTeture_MATCAP_ON)] _MatcapScale("Matcap Scale", Float) = 1.0
-        [Sub(MainTeture_MATCAP_ON)] _MatcapOffset("Matcap Offset", Vector) = (0,0,0,0)
+        [Sub(MainTeture_MATCAP_ON)] _MatcapOffset("Matcap Offset", Vector) = (0.5,0.5,0,0)
 
         //顶点混合
         [Main(LayerBlend)] _EnableLayerBlend("Layer blend", Float) = 1
         //混合顶点颜色R
         [Tex(LayerBlend,_LayerColorR)]_LayerMapR("BlendMap01", 2D) = "white" {}
         [HideInInspector]_LayerColorR("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend)] _LayerMapR_ST("Tiling Offset", vector) = (1,1,0,0)
         [Sub(LayerBlend)]_HueShiftLayerR("Hue Shift", Range(0.0, 1.0)) = 0.0
         [Sub(LayerBlend)]_SaturationLayerR("Saturation", Range(0.0, 2.0)) = 1.0
         [Sub(LayerBlend)]_BrightnessLayerR("Brightness", Range(0.0, 2.0)) = 1.0
@@ -93,6 +95,7 @@ Shader "Hong/LitCustom"
         [SubToggle(LayerBlend,_ENABLE_LAYER_BLEDN_LAYER02)] _EnableLayerBlendLayer02("Enable layer blend layer02", Float) = 0
         [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02,_LayerColorG)] _LayerMapG("BlendMap02", 2D) = "white" {}
         [HideInInspector] _LayerColorG("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _LayerMapG_ST("Tiling Offset", vector) = (1,1,0,0)
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _HueShiftLayerG("Hue Shift", Range(0.0, 1.0)) = 0.0
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _SaturationLayerG("Saturation", Range(0.0, 2.0)) = 1.0
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER02)] _BrightnessLayerG("Brightness", Range(0.0, 2.0)) = 1.0
@@ -110,6 +113,7 @@ Shader "Hong/LitCustom"
         [SubToggle(LayerBlend,_ENABLE_LAYER_BLEDN_LAYER03)] _EnableLayerBlendLayer03("Enable layer blend layer03", Float) = 0
         [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03,_LayerColorB)]_LayerMapB("BlendMap03", 2D) = "white" {}
         [HideInInspector]_LayerColorB("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)] _LayerMapB_ST("Tiling Offset", vector) = (1,1,0,0)
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_HueShiftLayerB("Hue Shift", Range(0.0, 1.0)) = 0.0
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_SaturationLayerB("Saturation", Range(0.0, 2.0)) = 1.0
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER03)]_BrightnessLayerB("Brightness", Range(0.0, 2.0)) = 1.0
@@ -127,6 +131,7 @@ Shader "Hong/LitCustom"
         [SubToggle(LayerBlend,_ENABLE_LAYER_BLEDN_LAYER04)] _EnableLayerBlendLayer04("Enable layer blend layer04", Float) = 0
         [Tex(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04,_LayerColorA)]_LayerMapA("BlendMap04", 2D) = "white" {}
         [HideInInspector]_LayerColorA("Color", Color) = (1,1,1,1)
+        [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)] _LayerMapA_ST("Tiling Offset", vector) = (1,1,0,0)
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)] _HueShiftLayerA("Hue Shift", Range(0.0, 1.0)) = 0.0
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_SaturationLayerA("Saturation", Range(0.0, 2.0)) = 1.0
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_BrightnessLayerA("Brightness", Range(0.0, 2.0)) = 1.0
@@ -142,9 +147,9 @@ Shader "Hong/LitCustom"
 
         //顶点动画功能
         [Main(VertexAnima)]_VertexAnima("Vertex Anima",float)=1
-        [SubToggle(VertexAnima,_VERTEXANIMA)]_EnableVertexAnima("Enable Vertex Anima",float)=1
+        [SubToggle(VertexAnima,_VERTEXANIMA)]_EnableVertexAnima("Enable Vertex Anima",float)=0
         [Sub(VertexAnima_VERTEXANIMA)]_AnimaTilingSpeed("Anima Tiling Speed", vector) = (1,1,0,0)
-        [Sub(VertexAnima_VERTEXANIMA)]_AnimaWarpStrength("_Anima Warp Strength", Float) = 0.1
+        [Sub(VertexAnima_VERTEXANIMA)]_AnimaWarpStrength("_Anima Warp Strength", Float) = 0
 
         // 卡通描边功能
         [Main(Outline)]_Outline("Outline",float)=1
