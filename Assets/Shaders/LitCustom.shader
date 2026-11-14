@@ -28,7 +28,7 @@ Shader "Hong/LitCustom"
 
         [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 
-        [Main(MainTeture)]_group1("MainTeture",float)=1
+        [Main(MainTeture,_,on,off)]_group1("MainTeture",float)=1
         [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
         [Sub(MainTeture)] _BaseMap_ST("Tiling Offset", vector) = (1,1,0,0)
 
@@ -73,7 +73,7 @@ Shader "Hong/LitCustom"
         [Sub(MainTeture_MATCAP_ON)] _MatcapOffset("Matcap Offset", Vector) = (0.5,0.5,0,0)
 
         //顶点混合
-        [Main(LayerBlend)] _EnableLayerBlend("Layer blend", Float) = 1
+        [Main(LayerBlend,_,on,off)] _EnableLayerBlend("Layer blend", Float) = 1
         //混合顶点颜色R
         [Tex(LayerBlend,_LayerColorR)]_LayerMapR("BlendMap01", 2D) = "white" {}
         [HideInInspector]_LayerColorR("Color", Color) = (1,1,1,1)
@@ -146,13 +146,13 @@ Shader "Hong/LitCustom"
         [Sub(LayerBlend_ENABLE_LAYER_BLEDN_LAYER04)]_OcclusionStrengthLayerA("Strength", Range(0.0, 1.0)) = 1.0
 
         //顶点动画功能
-        [Main(VertexAnima)]_VertexAnima("Vertex Anima",float)=1
+        [Main(VertexAnima,_,on,off)]_VertexAnima("Vertex Anima",float)=1
         [SubToggle(VertexAnima,_VERTEXANIMA)]_EnableVertexAnima("Enable Vertex Anima",float)=0
         [Sub(VertexAnima_VERTEXANIMA)]_AnimaTilingSpeed("Anima Tiling Speed", vector) = (1,1,0,0)
         [Sub(VertexAnima_VERTEXANIMA)]_AnimaWarpStrength("_Anima Warp Strength", Float) = 0
 
         // 卡通描边功能
-        [Main(Outline)]_Outline("Outline",float)=1
+        [Main(Outline,_,on,off)]_Outline("Outline",float)=1
         [SubToggle(Outline,_ENABLE_OUTLINE)] _EnableOutline("Enable Outline", Float) = 0
         [Sub(Outline_ENABLE_OUTLINE)]_OutlineColor("Outline Color", Color) = (0,0,0,1)
         [Sub(Outline_ENABLE_OUTLINE)]_OutlineWidth("Outline Width", Range(0.0, 10)) = 0.03
