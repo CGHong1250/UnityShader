@@ -26,7 +26,7 @@ Shader "Hong/LitWater"
 
         [ToggleUI] _ReceiveShadows("Receive Shadows", Float) = 1.0
 
-        [Main(MainTeture)]_group1("MainTeture",float)=1
+        [Main(MainTeture,_,on,off)]_group1("MainTeture",float)=1
         [Tex(MainTeture,_BaseColor)]_BaseMap("Albedo", 2D) = "white" {}
         [SubToggle(MainTeture,_NORMALMAP)] _EnableNormalMap("Enable Normal Map", float) = 1
         [Tex(MainTeture_NORMALMAP,_BumpScale)]_BumpMap("Normal Map", 2D) = "bump" {}
@@ -52,7 +52,7 @@ Shader "Hong/LitWater"
         [Sub(MainTeture_MATCAP_ON)] _MatcapOffset("Matcap Offset", Vector) = (0,0,0,0)
 
                 // --- 水面特效组 ---
-        [Main(WaterSettings)] _WaterSettings("Water Settings", Float) = 1
+        [Main(WaterSettings,_,on,off)] _WaterSettings("Water Settings", Float) = 1
         
         // 深度与颜色
         
