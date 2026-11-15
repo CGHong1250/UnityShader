@@ -7,20 +7,26 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: "\u4E8C\u6B21\u5143\u89D2\u8272_\u6D41\u8424Class"
-  m_Shader: {fileID: 4800000, guid: 3ceb6315325149c4d9138976a0f16eda, type: 3}
+  m_Name: "\u4E8C\u6B21\u5143\u89D2\u8272_\u53EF\u7433_Hair"
+  m_Shader: {fileID: 4800000, guid: 6caf0ec0c63184a4ca8cf71883e7e69a, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _ENABLE_OUTLINE
+  - _ISHAIR_ON
+  - _NORMALMAP
+  - _RAMP_MAP
   - _SPECULAR_COLOR
-  - _SURFACE_TYPE_TRANSPARENT
+  - _TOONSPEC_ON
   m_InvalidKeywords:
+  - _
   - _ENABLELAYERBLEND_ON
   - _ENABLERIM
   - _GROUP1_ON
-  - _MATCAP_ON
-  - _METALLIC
   - _OUTLINE_ON
+  - _SPECULAR_SETUP
+  - _TOONRAMP_MAP
+  - _TOON_ON
   - _VERTEXANIMA_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -33,11 +39,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 74dfb3c0749ca194ab8ebd3732e2e6cf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a4a96fef9a9c553449b011eddf95d281, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapLayerA:
@@ -76,6 +82,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FaceLightMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _LayerMapA:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -92,12 +102,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _M:
+        m_Texture: {fileID: 2800000, guid: 037109e3362695445acc5d2dd0d29deb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MatCap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MatcapTex:
-        m_Texture: {fileID: 2800000, guid: 5d6e6dbacfabb044eb110c903211268f, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -136,8 +154,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampMap:
+        m_Texture: {fileID: 2800000, guid: a591a1ccce993cc4cb5abc9922374d78, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ToonRampMap:
+        m_Texture: {fileID: 2800000, guid: b6687a5db8723504f92740b1ed6a2c9b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -157,11 +183,12 @@ Material:
     - _AlphaClip: 0
     - _AlphaTest: 0
     - _AlphaToMask: 0
+    - _AmbientStrength: 0.5
     - _AnimaWarpStrength: 0.1
     - _BaseGroup: 1
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _Brightness: 1
+    - _Brightness: 2
     - _BrightnessLayerA: 1
     - _BrightnessLayerB: 1
     - _BrightnessLayerG: 1
@@ -178,7 +205,7 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DisableShadows: 0
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EmissionGroup: 1
     - _EnableEmission: 0
@@ -186,27 +213,46 @@ Material:
     - _EnableLayerBlendLayer02: 0
     - _EnableLayerBlendLayer03: 0
     - _EnableLayerBlendLayer04: 0
-    - _EnableMatcap: 1
-    - _EnableNormalMap: 0
-    - _EnableOutline: 0
+    - _EnableMatcap: 0
+    - _EnableNormalMap: 1
+    - _EnableOutline: 1
     - _EnablePBRMap: 0
     - _EnableParallaxMap: 0
     - _EnableRim: 1
+    - _EnableToonRamp: 1
+    - _EnableToonSpec: 1
     - _EnableVertexAnima: 0
     - _Enable_Emission: 0
     - _EnvironmentReflections: 1
+    - _FaceGroup: 1
+    - _FaceSDFOffset: 0
+    - _FaceSDFSoftness: 0.1
+    - _FaceShadowStrength: 0.5
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossinessSource: 0
     - _GlossyReflections: 0
+    - _HairGroup: 1
+    - _HairHighlightBias: 0
+    - _HairHighlightPower: 8
+    - _HairHighlightScale: 0.6
     - _HueShift: 0
     - _HueShiftLayerA: 0
     - _HueShiftLayerB: 0
     - _HueShiftLayerG: 0
     - _HueShiftLayerR: 0
-    - _MatcapIntensity: 32
+    - _InnerEdgeGroup: 1
+    - _InnerEdgeIntensity: 2
+    - _InnerEdgeThreshold: 0.02
+    - _InnerEdgeWidth: 10
+    - _IsFace: 0
+    - _IsHair: 1
+    - _MatCapGroup: 1
+    - _MatCapIntensity: 1
+    - _MatCapWeight: 1
+    - _MatcapIntensity: 1
     - _MatcapScale: 1
-    - _Metallic: 0
+    - _Metallic: 0.637
     - _MetallicLayerA: 0
     - _MetallicLayerB: 0
     - _MetallicLayerG: 0
@@ -218,20 +264,30 @@ Material:
     - _OcclusionStrengthLayerG: 1
     - _OcclusionStrengthLayerR: 1
     - _Outline: 1
-    - _OutlineWidth: 0.03
+    - _OutlineGroup: 1
+    - _OutlineWidth: 0.25
     - _Parallax: 0.005
     - _QueueOffset: 0
+    - _RampSmoothness: 0.15
+    - _RampSteps: 2
     - _ReceiveShadows: 1
     - _RenderingGroup: 1
+    - _RimGroup: 1
+    - _RimIntensity: 4
     - _RimLightness: 1
+    - _RimPower: 16
     - _RimScale: 1
-    - _Saturation: 1
+    - _RimSmoothness: 0.5
+    - _RimThreshold: 1
+    - _Saturation: 0
     - _SaturationLayerA: 1
     - _SaturationLayerB: 1
     - _SaturationLayerG: 1
     - _SaturationLayerR: 1
+    - _ShadowOffset: 0
+    - _ShadowRampFloor: 0.25
     - _Shininess: 0
-    - _Smoothness: 0.5
+    - _Smoothness: 0.564
     - _SmoothnessLayerA: 0.5
     - _SmoothnessLayerB: 0.5
     - _SmoothnessLayerG: 0.5
@@ -241,32 +297,61 @@ Material:
     - _SpecSource: 0
     - _SpecularGroup: 1
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 1
+    - _Surface: 0
+    - _Toon: 1
+    - _ToonAmbientStrength: 1
+    - _ToonGroup: 1
+    - _ToonNormalWeight: 1
+    - _ToonShadowOffset: 0.07
+    - _ToonSmoothness: 0.05
+    - _ToonSpecIntensity: 1
+    - _ToonSpecPower: 32
+    - _ToonSpecSmoothness: 0.02
+    - _ToonSpecThreshold: 0.5
+    - _ToonSteps: 1
+    - _UseFaceShadowPoint: 0
+    - _UseInnerEdge: 0
+    - _UseMatCap: 0
+    - _UseRampMap: 1
+    - _UseRim: 0
+    - _UseToonSpecular: 1
     - _VertexAnima: 1
     - _WarpStrength: 0.1
-    - _WorkflowMode: 1
+    - _WorkflowMode: 0
     - _ZTest: 4
-    - _ZWrite: 0
+    - _ZWrite: 1
     - _group1: 1
     m_Colors:
     - _AnimaTilingSpeed: {r: 1, g: 1, b: 0, a: 0}
-    - _BaseColor: {r: 0.554717, g: 0.554717, b: 0.554717, a: 0.5294118}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FaceForward: {r: -1, g: 0, b: 0, a: 0}
+    - _FaceRight: {r: 0, g: -1, b: 0, a: 0}
+    - _FaceShadowPosWS: {r: 0, g: 0, b: 0, a: 0}
+    - _InnerEdgeColor: {r: 0, g: 0, b: 0, a: 1}
     - _LayerColorA: {r: 1, g: 1, b: 1, a: 1}
     - _LayerColorB: {r: 1, g: 1, b: 1, a: 1}
     - _LayerColorG: {r: 1, g: 1, b: 1, a: 1}
     - _LayerColorR: {r: 1, g: 1, b: 1, a: 1}
-    - _MatcapOffset: {r: 0.5, g: 0.5, b: 0, a: 0}
+    - _MatcapOffset: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _RampLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RampShadowColor: {r: 0.34999996, g: 0.39999998, b: 0.54999995, a: 1}
+    - _RampTint: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowTint: {r: 1, g: 0.85, b: 0.85, a: 1}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColorLayerA: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerB: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerG: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SpecColorLayerR: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _TilingSpeed: {r: 1, g: 1, b: 0, a: 0}
+    - _ToonLightColor: {r: 1, g: 0.8962264, b: 0.8962264, a: 1}
+    - _ToonShadowColor: {r: 1, g: 0.8373108, b: 0.6924528, a: 1}
+    - _ToonSpecColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6650373727660852116
 MonoBehaviour:

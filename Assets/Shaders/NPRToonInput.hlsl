@@ -52,6 +52,11 @@ CBUFFER_START(UnityPerMaterial)
     half   _HairHighlightPower; // 越大光带越窄
     half   _HairHighlightScale;
 
+    // ---- 阴影遮罩化（替代「实时阴影直接乘进梯度」）----
+    half   _ShadowRampFloor;     // 阴影最暗处落在 Ramp 的位置（0=纯黑, 1=不压暗）
+    half4  _ShadowTint;          // 阴影侧染色（暖色暗部，对应参考的 _RampColor_Skin）
+    half   _FaceShadowStrength;  // 脸部接收实时阴影的强度（0=脸不吃实时阴影）
+
     // ---- MatCap ----
     half   _MatCapIntensity;
     half   _MatCapWeight;       // 0 = 全 PBR 高光，1 = 全 MatCap
@@ -69,12 +74,6 @@ CBUFFER_START(UnityPerMaterial)
     float4 _FaceShadowPosWS;    // 整脸共享的阴影采样点（由 C# 每帧写入）
     half   _FaceSDFSoftness;
     half   _FaceSDFOffset;
-
-    // ---- 内轮廓（屏幕空间深度边缘）----
-    half4  _InnerEdgeColor;
-    half   _InnerEdgeWidth;
-    half   _InnerEdgeThreshold;
-    half   _InnerEdgeIntensity;
 CBUFFER_END
 
 // ---------------------------------------------------------------------------
@@ -87,6 +86,7 @@ TEXTURE2D(_SpecGlossMap);   SAMPLER(sampler_SpecGlossMap);
 TEXTURE2D(_RampMap);        SAMPLER(sampler_RampMap);
 TEXTURE2D(_FaceLightMap);   SAMPLER(sampler_FaceLightMap);
 TEXTURE2D(_MatCap);         SAMPLER(sampler_MatCap);
+TEXTURE2D(_M);              SAMPLER(sampler_M);
 
 // ---------------------------------------------------------------------------
 //  与 LitToonInput.hlsl 保持一致的 SurfaceData 初始化

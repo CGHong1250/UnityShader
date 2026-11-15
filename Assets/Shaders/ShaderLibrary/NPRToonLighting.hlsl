@@ -11,19 +11,17 @@
 //
 //  设计要点（对照 URP_NPR.shader 的思路）：
 //    1. 明暗 = Ramp 查表：把 N·L 量化成 N 档，再去采样一张 1D Ramp 贴图。
-//       "半兰伯特 + 阴影 + 阶梯" 三步合一，一次采样出结果。
-//    2. 阴影不单独乘，而是并进 Ramp 的采样坐标，让投影阴影和背光面走同一套色阶。
+//    2. 阴影遮罩化：实时阴影不再直接乘进梯度，而是把 Ramp 坐标压到
+//       _ShadowRampFloor（保留暗部颜色），再乘 _ShadowTint 做暖色暗部。
+//       （参考 URP_NPR 的脸部是「屏幕空间头发阴影 + _RampColor_Skin」，这里不用屏幕空间）
 //    3. 脸部不用 N·L，用预烘焙的 SDF 图 + 光照角度比较（见 NPRFaceGradient）。
-//    4. 头发高光用 N·V（视线角）而不是 N·H，得到"沿轮廓的一圈光带"。
+//    4. 头发高光用 N·V（视线角）而不是 N·H，得到"沿轮廓的一圈光带"；
+//       并用 _M 的 B 通道（刘海高光 mask）控制光带形状。
 //    5. MatCap 用视空间法线当 UV，金属靠它而不是物理高光。
 //    6. 光源颜色只乘一次（原 NPR 在三个地方各乘一次，这是要避免的坑）。
 // ===========================================================================
 
 #include "Assets/Shaders/NPRToonInput.hlsl"
-
-#if defined(_INNER_EDGE_ON)
-    #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
-#endif
 
 // ---------------------------------------------------------------------------
 //  1. 阶梯量化
@@ -71,7 +69,27 @@ half NPRGradient(Light light, half3 shadingNormal)
     // _ShadowOffset 为正当于把交界线往暗部推（脸更亮更干净）
     half shifted = saturate(halfLambert + _ShadowOffset);
 
-    return shifted * saturate(light.shadowAttenuation) * light.distanceAttenuation;
+    // 注意：这里只算 N·L 和距离衰减，不再乘 shadowAttenuation。
+    // 实时阴影改由 NPRApplyShadow 做「遮罩化」，避免阴影直接压到 0 变黑。
+    return shifted * light.distanceAttenuation;
+}
+
+// ---------------------------------------------------------------------------
+//  3.5 阴影遮罩化（替代「阴影直接乘进梯度」）
+//      原版：gradient *= shadow  -> 阴影一来整块掉到 ramp 最暗（发黑）
+//      现在：t = lerp(_ShadowRampFloor, litT, shadow)
+//            - 阴影不再把 ramp 压到 0，而是压到 _ShadowRampFloor（保留颜色）
+//            - 再用 NPRShadowTint 给阴影侧染 _ShadowTint（暖色暗部）
+//      shadow: 1 = 全光照, 0 = 全阴影
+// ---------------------------------------------------------------------------
+half NPRApplyShadow(half litT, half shadow)
+{
+    return lerp(_ShadowRampFloor, litT, saturate(shadow));
+}
+
+half3 NPRShadowTint(half3 color, half shadow)
+{
+    return color * lerp(_ShadowTint.rgb, half3(1.0, 1.0, 1.0), saturate(shadow));
 }
 
 // ---------------------------------------------------------------------------
@@ -104,11 +122,15 @@ half NPRFaceGradient(float2 uv, Light light)
     half a = abs(faceNL);
     a *= a;
 
+    // 和参考 URP_NPR 完全一致：smoothstep(a, a + soft, sdf)
+    // 注意是「下边缘 = a，上边缘 = a + soft」，不是以 a 为中心的对称写法。
+    // soft 越大，明暗交界线越宽越柔；参考里固定 0.2。
     half soft = max(_FaceSDFSoftness, 1.0e-4);
-    half l = smoothstep(a - soft, a + soft, sdfValue) * FL;
+    half l = smoothstep(a, a + soft, sdfValue) * FL;
 
-    // 投影阴影直接把整脸压到暗部色阶
-    return saturate(l * saturate(light.shadowAttenuation));
+    // 不再直接乘 shadowAttenuation：实时阴影由主流程的 NPRApplyShadow 处理，
+    // 否则刘海硬影会把整张脸压黑两次（参考里这块是屏幕空间头发阴影解决的）。
+    return saturate(l);
 }
 
 // ---------------------------------------------------------------------------
@@ -116,16 +138,24 @@ half NPRFaceGradient(float2 uv, Light light)
 //     N·H 会随光源滑动成"点状"高光；N·V 只跟视线有关，
 //     得到沿轮廓的一圈亮边 —— 动漫头发那条光带。
 // ---------------------------------------------------------------------------
-half NPRHairBand(Light light, half3 normalWS, half3 viewDirWS)
+half NPRHairBand(Light light, half3 normalWS, half3 viewDirWS, float2 uv)
 {
     half NdotV = saturate(dot(normalWS, viewDirWS));
     half NdotL = saturate(dot(normalWS, light.direction));
+    half shadow = saturate(light.shadowAttenuation);
 
-    half band = pow(saturate(NdotV + _HairHighlightBias), max(_HairHighlightPower, 1.0));
-    band *= NdotL;                                          // 背光不出光带
-    band *= saturate(light.shadowAttenuation);              // 阴影里不亮
+    // _M 的 B 通道 = 刘海高光 mask（对应参考 URP_NPR 的 m.b）
+    half mask = SAMPLE_TEXTURE2D(_M, sampler_M, uv).b;
 
-    return saturate(band) * _HairHighlightScale;
+    // ① 各向异性高光带（参考：pow(NV+bias, power) * scale * mask * NL * shadow）
+    half specBand = pow(saturate(NdotV + _HairHighlightBias), max(_HairHighlightPower, 1.0))
+                  * _HairHighlightScale * mask * NdotL * shadow;
+    specBand = saturate(specBand);
+
+    // ② mask 处再加一条柔和受光带，让刘海有一块被照亮的感觉
+    half softBand = mask * NdotL * 0.5 * max(0.2, shadow);
+
+    return specBand + softBand;
 }
 
 // ---------------------------------------------------------------------------
@@ -185,49 +215,7 @@ half3 NPRRim(half3 normalWS, half3 viewDirWS, half shadowAtten)
 }
 
 // ---------------------------------------------------------------------------
-//  9. 内轮廓：屏幕空间深度边缘检测
-//     原理：如果相邻像素比当前像素"更近"，说明当前像素处在一个被遮挡的边界上，
-//           这个边界就是内轮廓（袖子压身体、下巴压脖子那种线）。
-//     对比原 NPR 的做法：
-//       原版要一个 SSDepthOffsetPassFeature 把物体画成纯色+深度存到 _DepthMaskColor；
-//       这里直接读 URP 的 _CameraDepthTexture，不需要写 RendererFeature，
-//       代价是必须在 URP Asset 里打开 Depth Texture（可见"使用说明"）。
-//
-//     注意：这里不用 positionCS.z / positionCS.w 取自身深度 ——
-//     像素阶段的 SV_POSITION.w 已经是 1/w，除出来不是线性深度。
-//     改用世界坐标转观察空间取 -z，语义明确，不依赖平台约定。
-// ---------------------------------------------------------------------------
-half NPRInnerEdge(float2 screenUV, half selfEyeDepth)
-{
-#if defined(_INNER_EDGE_ON)
-    // _ScreenParams.zw = (1 + 1/W, 1 + 1/H)，所以 zw-1 = 一个像素的 UV 大小
-    float2 texel = float2(_ScreenParams.z - 1.0, _ScreenParams.w - 1.0) * max(_InnerEdgeWidth, 0.0);
-
-    float d1 = SampleSceneDepth(screenUV + float2( texel.x, 0.0));
-    float d2 = SampleSceneDepth(screenUV + float2(-texel.x, 0.0));
-    float d3 = SampleSceneDepth(screenUV + float2(0.0,  texel.y));
-    float d4 = SampleSceneDepth(screenUV + float2(0.0, -texel.y));
-
-    float dMin = min(min(d1, d2), min(d3, d4));
-
-    // 没有深度纹理时（没开 Depth Texture）采到的是 0，直接跳过，避免整片变黑
-    if (dMin < 1.0e-6)
-        return 0.0;
-
-    float eyeMin = LinearEyeDepth(dMin, _ZBufferParams);
-
-    // 用自身距离归一化 -> 远近的线宽手感一致
-    float diff = (selfEyeDepth - eyeMin) / max(selfEyeDepth, 1.0e-3);
-
-    half thr = max(_InnerEdgeThreshold, 1.0e-4);
-    return smoothstep(thr, thr * 2.0, diff);
-#else
-    return 0.0;
-#endif
-}
-
-// ---------------------------------------------------------------------------
-//  10. 主入口：替换 URP 的 UniversalFragmentBlinnPhong
+//  9. 主入口：替换 URP 的 UniversalFragmentBlinnPhong
 //      结构与 URP 原函数保持一致（附加光 / 顶点光 / GI / 雾 / 调试），
 //      只把主光的漫反射和高光换成卡通算法。
 // ---------------------------------------------------------------------------
@@ -276,16 +264,22 @@ half4 UniversalFragmentNPRToon(InputData inputData, SurfaceData surfaceData,
     if (mainLightVisible)
     {
 #if defined(_ISFACE_ON)
-        // 脸部：SDF 给出梯度 -> Ramp
+        // 脸部：SDF 给出「受光梯度」，实时阴影按 _FaceShadowStrength 削弱，
+        // 避免刘海硬影把整张脸压黑（参考里这块是靠屏幕空间头发阴影解决的）。
         half faceGradient = NPRFaceGradient(uv, mainLight);
-        mainDiffuse = albedo * NPRSampleRamp(faceGradient) * mainLight.color;
+        half faceShadow = lerp(1.0, saturate(mainLight.shadowAttenuation), saturate(_FaceShadowStrength));
+        half t = NPRApplyShadow(faceGradient, faceShadow);
+        mainDiffuse = albedo * NPRSampleRamp(t) * mainLight.color;
+        mainDiffuse = NPRShadowTint(mainDiffuse, faceShadow);
 #else
         half gradient = NPRGradient(mainLight, shadingNormal);
         half stepped  = NPRQuantize(gradient, _RampSteps, _RampSmoothness);
-        mainDiffuse   = albedo * NPRSampleRamp(stepped) * mainLight.color;
+        half t = NPRApplyShadow(stepped, mainLight.shadowAttenuation);
+        mainDiffuse = albedo * NPRSampleRamp(t) * mainLight.color;
+        mainDiffuse = NPRShadowTint(mainDiffuse, mainLight.shadowAttenuation);
 
     #if defined(_ISHAIR_ON)
-        hairBand = NPRHairBand(mainLight, normalWS, viewDirWS) * mainLight.color;
+        hairBand = NPRHairBand(mainLight, normalWS, viewDirWS, uv) * albedo * mainLight.color;
     #elif defined(_TOONSPEC_ON)
         half mask = NPRSpecularMask(mainLight, normalWS, viewDirWS,
                                     surfaceData.smoothness, dot(normalWS, mainLight.direction));
@@ -312,7 +306,8 @@ half4 UniversalFragmentNPRToon(InputData inputData, SurfaceData surfaceData,
         #endif
         {
             half g = NPRGradient(light, shadingNormal);
-            additional += albedo * NPRSampleRamp(NPRQuantize(g, _RampSteps, _RampSmoothness)) * light.color;
+            half ta = NPRApplyShadow(NPRQuantize(g, _RampSteps, _RampSmoothness), light.shadowAttenuation);
+            additional += NPRShadowTint(albedo * NPRSampleRamp(ta) * light.color, light.shadowAttenuation);
         }
     }
     #endif
@@ -324,7 +319,8 @@ half4 UniversalFragmentNPRToon(InputData inputData, SurfaceData surfaceData,
         #endif
         {
             half g = NPRGradient(light, shadingNormal);
-            additional += albedo * NPRSampleRamp(NPRQuantize(g, _RampSteps, _RampSmoothness)) * light.color;
+            half ta = NPRApplyShadow(NPRQuantize(g, _RampSteps, _RampSmoothness), light.shadowAttenuation);
+            additional += NPRShadowTint(albedo * NPRSampleRamp(ta) * light.color, light.shadowAttenuation);
         }
     LIGHT_LOOP_END
 #endif
@@ -358,14 +354,6 @@ half4 UniversalFragmentNPRToon(InputData inputData, SurfaceData surfaceData,
                 + ambient
                 + rim
                 + surfaceData.emission;   // 自发光不乘光色，没有主光时也应该亮
-
-    // ---- 内轮廓 ----
-#if defined(_INNER_EDGE_ON)
-    float3 positionVS = TransformWorldToView(inputData.positionWS);
-    half selfEyeDepth = max(-positionVS.z, 1.0e-4);
-    half edge = NPRInnerEdge(inputData.normalizedScreenSpaceUV, selfEyeDepth);
-    color = lerp(color, _InnerEdgeColor.rgb, saturate(edge * _InnerEdgeIntensity));
-#endif
 
     return half4(color, surfaceData.alpha);
 }

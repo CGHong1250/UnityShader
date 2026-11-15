@@ -3,7 +3,27 @@ guid: 120172016d0d6b84fbcdd78a2c3d9dfb
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_Corin_Body.001
+    second: {fileID: 2100000, guid: 11acd0d141b51784c8d06b7d5023ab30, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_Corin_Face.001
+    second: {fileID: 2100000, guid: 3f272044789d0fb45a804174ee5e0c71, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_Corin_Hair.001
+    second: {fileID: 2100000, guid: 4d2d5b8da3b58ca4ea7fb9af8745e28d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MAT_Corin_Weapon.001
+    second: {fileID: 2100000, guid: ac839e41625864e4f89749b4275bd8dc, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

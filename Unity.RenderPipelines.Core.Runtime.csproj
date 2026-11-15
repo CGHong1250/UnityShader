@@ -59,6 +59,7 @@
     <UnityVersion>2022.3.62f3</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Users\Administrator\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.3.2\Analyzers\Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="C:\Program Files\Unity 2022.3.62f3\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity 2022.3.62f3\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
@@ -141,8 +142,8 @@
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Debugging\Prefabs\Scripts\DebugUIHandlerContainer.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Debugging\Prefabs\Scripts\DebugUIHandlerObjectList.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Lighting\ProbeVolume\ProbeReferenceVolume.cs" />
-    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Utilities\CoreRenderPipelinePreferences.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\RenderGraph\RenderGraphResourceTexture.cs" />
+    <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Utilities\CoreRenderPipelinePreferences.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Lighting\ProbeVolume\ProbeVolume.Migration.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Common\SerializedDictionary.cs" />
     <Compile Include="Library\PackageCache\com.unity.render-pipelines.core@14.0.12\Runtime\Volume\VolumeParameter.cs" />
@@ -610,6 +611,10 @@
     </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.11.2\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FlowPainter">
+      <HintPath>Assets\TLNEXUS\Editor\PicSuite\FlowPainter\FlowPainter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">

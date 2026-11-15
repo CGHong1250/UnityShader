@@ -1,22 +1,5 @@
 // ===========================================================================
 //  NPRToon.shader  —  URP 卡通 / NPR 着色器
-//
-//  来源与关系：
-//    · 骨架（Pass 结构、混合模式、LWGUI 面板风格）继承自本工程的 LitToon.shader
-//    · 光照算法移植自 URP_NPR.shader 的思路（Ramp 查表 / 脸部 SDF / 头发 N·V 光带
-//      / MatCap / 屏幕空间描边），并按工程习惯重写、去掉了对外部 PassFeature 的依赖
-//
-//  与原 NPR 的主要差异（都是"改进"）：
-//    1. 光源颜色只乘一次（原版在 3 处各乘一次，给了光色就会发暗偏色）
-//    2. 自发光不受主光颜色影响（原版夜里自发光会变黑）
-//    3. 内轮廓不再依赖 SSDepthOffsetPassFeature，改成读 _CameraDepthTexture
-//       （代价：必须在 URP Asset 里打开 Depth Texture）
-//    4. 描边改成"恒定屏幕宽度"，远近粗细一致（原版按观察空间偏移，远了会变细）
-//    5. 去掉了原版里算了却被丢弃的环境镜面项、以及没用上的 SDF 偏移参数
-//
-//  仍未包含（需要额外基础设施，见使用说明）：
-//    · 屏幕空间刘海投影（原版靠 SSHSRenderPassFeature，本工程没有）
-//    · 金属 GGX（需要 BRDFData + 环境探针，属于 PBR 融合部分，可按说明接入）
 // ===========================================================================
 
 Shader "Hong/NPRToon"
@@ -63,6 +46,9 @@ Shader "Hong/NPRToon"
         [Sub(Toon)] _RampTint("Ramp Tint", Color) = (1,1,1,1)
         [Sub(Toon)] _RampShadowColor("Shadow Color (无贴图时)", Color) = (0.35,0.40,0.55,1)
         [Sub(Toon)] _RampLightColor("Light Color (无贴图时)", Color) = (1,1,1,1)
+        // ---- 阴影遮罩化（不使用屏幕空间阴影时的替代方案）----
+        [Sub(Toon)] _ShadowRampFloor("Shadow Min Ramp (0=纯黑, 1=不压暗)", Range(0.0, 1.0)) = 0.25
+        [Sub(Toon)] _ShadowTint("Shadow Tint (暗部染色)", Color) = (1, 0.85, 0.85, 1)
 
         [SubToggle(Toon, _RAMP_MAP)] _UseRampMap("Use Ramp Map", Float) = 0
         [Sub(Toon_RAMP_MAP)] [NoScaleOffset] _RampMap("Ramp Map (纵轴=色阶)", 2D) = "white" {}
@@ -75,8 +61,10 @@ Shader "Hong/NPRToon"
         [Sub(Face_ISFACE_ON)] [NoScaleOffset] _FaceLightMap("Face Light Map (R:主 SDF  G:次 SDF)", 2D) = "white" {}
         [Sub(Face_ISFACE_ON)] _FaceRight("Face Right (世界空间)", Vector) = (0,-1,0,0)
         [Sub(Face_ISFACE_ON)] _FaceForward("Face Forward (世界空间)", Vector) = (-1,0,0,0)
-        [Sub(Face_ISFACE_ON)] _FaceSDFSoftness("SDF Softness", Range(0.001, 1.0)) = 0.1
+        [Sub(Face_ISFACE_ON)] _FaceSDFSoftness("SDF Softness", Range(0.001, 1.0)) = 0.2
         [Sub(Face_ISFACE_ON)] _FaceSDFOffset("SDF Offset", Range(-1.0, 1.0)) = 0.0
+        // ---- 脸部接收实时阴影的强度：0 = 脸完全不吃实时阴影（去掉刘海硬影）----
+        [Sub(Face_ISFACE_ON)] _FaceShadowStrength("Face Shadow Strength (0=脸不吃实时阴影)", Range(0.0, 1.0)) = 0.5
         [SubToggle(Face, _FACEPOINT_ON)] _UseFaceShadowPoint("整脸共享阴影坐标", Float) = 0
         [HideInInspector] _FaceShadowPosWS("_FaceShadowPosWS", Vector) = (0,0,0,0)
 
@@ -87,7 +75,9 @@ Shader "Hong/NPRToon"
         [SubToggle(Hair, _ISHAIR_ON)] _IsHair("Is Hair", Float) = 0
         [Sub(Hair_ISHAIR_ON)] _HairHighlightPower("Highlight Power", Range(1.0, 64.0)) = 8.0
         [Sub(Hair_ISHAIR_ON)] _HairHighlightBias("Highlight Bias", Range(-1.0, 1.0)) = 0.0
-        [Sub(Hair_ISHAIR_ON)] _HairHighlightScale("Highlight Scale", Range(0.0, 2.0)) = 0.6
+        [Sub(Hair_ISHAIR_ON)] _HairHighlightScale("Highlight Scale", Range(0.0, 50.0)) = 0.6
+        // ---- 刘海高光 mask：_M 的 B 通道（对应参考 URP_NPR 的 m.b）----
+        [Sub(Hair_ISHAIR_ON)] [NoScaleOffset] _M("Hair Light Mask (B)", 2D) = "white" {}
 
         // ------------------------------------------------------------
         // 卡通高光
@@ -131,16 +121,6 @@ Shader "Hong/NPRToon"
         [SubToggle(Outline, _ENABLE_OUTLINE)] _EnableOutline("Enable Outline", Float) = 0
         [Sub(Outline_ENABLE_OUTLINE)] _OutlineColor("Outline Color", Color) = (0,0,0,1)
         [Sub(Outline_ENABLE_OUTLINE)] _OutlineWidth("Outline Width (% 屏幕高度)", Range(0.0, 10.0)) = 1.0
-
-        // ------------------------------------------------------------
-        // 内轮廓（屏幕空间深度边缘）
-        // ------------------------------------------------------------
-        [Main(InnerEdge, _, on, off)] _InnerEdgeGroup("Inner Edge", Float) = 1
-        [SubToggle(InnerEdge, _INNER_EDGE_ON)] _UseInnerEdge("Enable Inner Edge", Float) = 0
-        [Sub(InnerEdge_INNER_EDGE_ON)] _InnerEdgeColor("Inner Edge Color", Color) = (0,0,0,1)
-        [Sub(InnerEdge_INNER_EDGE_ON)] _InnerEdgeWidth("Sample Width (px)", Range(0.0, 10.0)) = 1.5
-        [Sub(InnerEdge_INNER_EDGE_ON)] _InnerEdgeThreshold("Depth Threshold", Range(0.001, 0.5)) = 0.02
-        [Sub(InnerEdge_INNER_EDGE_ON)] _InnerEdgeIntensity("Intensity", Range(0.0, 2.0)) = 1.0
 
         // ------------------------------------------------------------
         // 法线（只用于高光/MatCap，不影响明暗阶梯）
@@ -297,7 +277,6 @@ Shader "Hong/NPRToon"
             #pragma shader_feature_local_fragment _ _TOONSPEC_ON
             #pragma shader_feature_local_fragment _ _MATCAP_ON
             #pragma shader_feature_local_fragment _ _RIM_ON
-            #pragma shader_feature_local_fragment _ _INNER_EDGE_ON
 
             // ---- Universal Pipeline keywords ----
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
